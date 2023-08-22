@@ -17,12 +17,12 @@ const navLinks = [
     icon: <FaHome />,
   },
   {
-    path: "/",
+    path: "/explore",
     title: "Explore",
     icon: <FaHashtag />,
   },
   {
-    path: "/",
+    path: "/notification",
     title: "Notification",
     icon: <FaRegBell />,
   },
@@ -32,12 +32,12 @@ const navLinks = [
     icon: <FaCommentDots />,
   },
   {
-    path: "/",
+    path: "/bookmarks",
     title: "Bookmarks",
     icon: <FaRegBookmark />,
   },
   {
-    path: "/",
+    path: "/lists",
     title: "Lists",
     icon: <FaClipboardList />,
   },
@@ -47,7 +47,7 @@ const navLinks = [
     icon: <FaUserCheck />,
   },
   {
-    path: "/",
+    path: "/more",
     title: "More",
     icon: <CgMoreO />,
   },
@@ -60,7 +60,8 @@ const Navbar = () => {
         {navLinks.map((link, index) => (
           <NavLink
             key={index}
-            href={link?.path}
+            href={link.path}
+            exact={link.path === "/"}
             activeClassName="bg-blue-800 hover:text-blue-300"
           >
             <div className="flex items-center">
