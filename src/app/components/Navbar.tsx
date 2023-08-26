@@ -55,22 +55,23 @@ const navLinks = [
 
 const Navbar = () => {
   return (
-    <div>
-      <nav className=" px-2">
-        {navLinks.map((link, index) => (
-          <NavLink
-            key={index}
-            href={link.path}
-            exact={link.path === "/"}
-            activeClassName="bg-blue-800 hover:text-blue-300"
-          >
-            <div className="flex items-center">
-              <p className="me-4 text-2xl">{link?.icon}</p>
-              <p className="text-lg">{link?.title}</p>
-            </div>
-          </NavLink>
-        ))}
-      </nav>
+    <div className=" px-2">
+      {navLinks.map((link, index) => (
+        <NavLink
+          key={index}
+          href={link.path}
+          exact={link.path === "/"}
+          activeClassName="bg-blue-800 hover:text-blue-300"
+        >
+          <div className="flex items-center">
+            <p className="me-4 text-2xl">{link?.icon}</p>
+            <p className="text-lg">{link?.title}</p>
+          </div>
+        </NavLink>
+      ))}
+      <button className="bg-blue-400 w-48 mt-5 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+        Create Post
+      </button>
     </div>
   );
 };

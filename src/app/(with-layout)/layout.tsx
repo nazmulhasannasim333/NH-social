@@ -16,7 +16,7 @@ const WithLayout = ({ children }: { children: React.ReactNode }) => {
       <body className={inter.className}>
         <div className="bg-gray-900 text-white min-h-screen">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-8">
+            <div className="grid lg:grid-cols-8 grid-cols-1">
               <LeftSide />
               {children}
               <RightSide />
