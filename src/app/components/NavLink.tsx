@@ -6,21 +6,24 @@ import { ReactNode } from "react";
 interface NavLinkProps {
   children: ReactNode;
   href: string;
-  activeClassName: string;
+  activeClassName?: string;
   className?: string;
-  exact: boolean;
+  exact?: boolean;
 }
 
 const NavLink = ({
   children,
   href,
-  activeClassName,
+  activeClassName = "",
   exact = false,
   ...props
 }: NavLinkProps) => {
   const path = usePathname();
   const active = exact ? path === href : path && path.startsWith(href);
-  const classes = classNames(props.className, active && activeClassName);
+  const classes = classNames(
+    props.className ?? "",
+    active ? activeClassName : ""
+  );
   if (classes) {
     props.className = classes;
   }
