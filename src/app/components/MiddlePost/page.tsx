@@ -9,13 +9,14 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsCameraVideo, BsEmojiLaughing } from "react-icons/bs";
 import {
-  FaCommentDots,
+  FaFacebookMessenger,
   FaHome,
   FaPhotoVideo,
   FaRegBell,
   FaUserCheck,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import EditPost from "../EditPost";
 import Like from "../Like";
 declare global {
   interface ImportMeta {
@@ -34,15 +35,28 @@ export interface Post {
   name: string;
   user_name: string;
 }
+interface EditPostProps {
+  showEdit: boolean;
+  post: Post;
+}
 type FormData = {
   tweetText: string;
   photo: string;
 };
 
 const MiddlePost = () => {
-  const [posts, refetch] = usePosts();
+  const [posts, isLoading, refetch] = usePosts();
   const [inputValue, setInputValue] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
+  const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
+
+  // Function to handle "Edit" button click
+  const handleEditClick = (postId: string) => {
+    setEditModes((prevEditModes) => ({
+      ...prevEditModes,
+      [postId]: !prevEditModes[postId], // Toggle the edit mode for this post
+    }));
+  };
 
   const image_upload_url = `https://api.imgbb.com/1/upload?key=${image_upload_token}`;
   // console.log(image_upload_token);
@@ -84,21 +98,26 @@ const MiddlePost = () => {
                 "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
             };
 
-            axios.post(`http://localhost:5000/post`, status).then((res) => {
-              console.log(res.data);
-              if (res.data.insertedId) {
-                refetch();
-                setInputValue("");
-                setShowEmoji(false);
-                Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: "Your post has been success",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              }
-            });
+            axios
+              .post(
+                `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
+                status
+              )
+              .then((res) => {
+                console.log(res.data);
+                if (res.data.insertedId) {
+                  refetch();
+                  setInputValue("");
+                  setShowEmoji(false);
+                  Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Your post has been success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
+              });
           }
         });
     } else {
@@ -111,21 +130,26 @@ const MiddlePost = () => {
         user_photo:
           "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       };
-      axios.post(`http://localhost:5000/post`, status).then((res) => {
-        console.log(res.data);
-        if (res.data.insertedId) {
-          refetch();
-          setInputValue("");
-          setShowEmoji(false);
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Your post has been success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      });
+      axios
+        .post(
+          `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
+          status
+        )
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            refetch();
+            setInputValue("");
+            setShowEmoji(false);
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Your post has been success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        });
     }
   };
 
@@ -248,68 +272,150 @@ const MiddlePost = () => {
           </div>
         </div>
       </form>
-      <hr className="border-blue-800 border-4" />
+      <hr className="border-blue-800 border-2" />
       <div></div>
-      {posts.map((post: Post) => (
-        <div key={post._id} className="">
-          <div className="flex flex-shrink-0 p-4 pb-0">
-            <div className="flex-shrink-0 group block">
-              <div className="flex items-center">
-                <div>
-                  <Image
-                    width={50}
-                    height={50}
-                    className="h-10 w-10 rounded-full"
-                    src={post?.user_photo}
-                    alt=""
-                  />
+      {!isLoading ? (
+        <>
+          {posts.map((post: Post, index: number) => (
+            <div key={post._id} className="">
+              <div className=" flex items-center justify-between p-4 pb-0 relative">
+                <div className="flex items-center">
+                  <div>
+                    <Image
+                      width={50}
+                      height={50}
+                      className="h-10 w-10 rounded-full"
+                      src={post?.user_photo}
+                      alt=""
+                    />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-base leading-6 font-medium text-white">
+                      {post?.name}
+                    </p>
+                    <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
+                      {post?.user_name} - 16 April 2023
+                    </span>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <p className="text-base leading-6 font-medium text-white">
-                    {post?.name}
-                  </p>
-                  <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                    {post?.user_name} - 16 April 2023
-                  </span>
+                <div
+                  onClick={() => handleEditClick(post._id)}
+                  className="font-semibold text-xl hover:cursor-pointer hover:text-blue-400"
+                >
+                  ...
                 </div>
-              </div>
-            </div>
-          </div>
-          <div className="pl-16 pr-2">
-            <p className="text-base width-auto font-medium text-white flex-shrink">
-              {post?.post_text}
-            </p>
-            {post.post_photo && (
-              <div className="md:flex-shrink pr-6 pt-3">
-                <Image
-                  height={1000}
-                  width={1000}
-                  className="rounded-lg h-full w-full"
-                  src={post?.post_photo}
-                  alt="Photo is brocken"
+                <EditPost
+                  editModes={editModes[post._id] || false}
+                  setEditModes={(postId) => handleEditClick(postId)}
+                  post={post}
+                  refetch={refetch}
                 />
               </div>
-            )}
-            <Like post={post} refetch={refetch} />
+              <div className="pl-16 pr-2">
+                <p className="text-base width-auto font-medium text-white flex-shrink">
+                  {post?.post_text}
+                </p>
+                {post.post_photo && (
+                  <div className="md:flex-shrink pr-6 pt-3">
+                    <Image
+                      height={1000}
+                      width={1000}
+                      className="rounded-lg h-full w-full"
+                      src={post?.post_photo}
+                      alt="Photo is brocken"
+                    />
+                  </div>
+                )}
+                <Like post={post} />
+              </div>
+              <hr className="border-gray-600" />
+            </div>
+          ))}
+
+          <nav className="lg:hidden fixed z-[999] flex justify-between items-center gap-5 bg-blue-400 px-6 py-3 backdrop-blur-md w-full rounded-full text-dark_primary duration-300 bottom-0">
+            <Link
+              href="/"
+              className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+            >
+              <FaHome />
+            </Link>
+            <Link
+              href="/notification"
+              className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+            >
+              <FaRegBell />
+            </Link>
+            <Link
+              href="/message"
+              className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+            >
+              <FaFacebookMessenger />
+            </Link>
+            <Link
+              href="/profile"
+              className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+            >
+              <FaUserCheck />
+            </Link>
+          </nav>
+        </>
+      ) : (
+        // Loading Skeleton
+        <>
+          <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+            <div className="flex justify-start items-center">
+              <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <div className="space-y-3">
+              <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+            </div>
+            <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
           </div>
           <hr className="border-gray-600" />
-        </div>
-      ))}
-
-      <nav className="lg:hidden fixed z-[999] flex justify-between items-center gap-5 bg-blue-400 px-6 py-3 backdrop-blur-md w-full rounded-full text-dark_primary duration-300 bottom-0">
-        <Link href="" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
-          <FaHome />
-        </Link>
-        <Link href="" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
-          <FaRegBell />
-        </Link>
-        <Link href="" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
-          <FaCommentDots />
-        </Link>
-        <Link href="" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
-          <FaUserCheck />
-        </Link>
-      </nav>
+          <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+            <div className="flex justify-start items-center">
+              <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <div className="space-y-3">
+              <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+            </div>
+            <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+          </div>
+          <hr className="border-gray-600" />
+          <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+            <div className="flex justify-start items-center">
+              <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <div className="space-y-3">
+              <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+            </div>
+            <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+          </div>
+          <hr className="border-gray-600" />
+          <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+            <div className="flex justify-start items-center">
+              <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <div className="space-y-3">
+              <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+            </div>
+            <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+          </div>
+          <hr className="border-gray-600" />
+        </>
+      )}
     </div>
   );
 };

@@ -3,15 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const usePosts = () => {
-  const { data: posts = [], refetch } = useQuery({
+  const {
+    data: posts = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await axios(`http://localhost:5000/posts`);
+      const response = await axios(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/posts`
+      );
       return response.data;
     },
   });
 
-  return [posts, refetch];
+  return [posts, isLoading, refetch];
 };
 
 export default usePosts;

@@ -1,7 +1,7 @@
 import { CgMoreO } from "react-icons/cg";
 import {
   FaClipboardList,
-  FaCommentDots,
+  FaFacebookMessenger,
   FaHashtag,
   FaHome,
   FaRegBell,
@@ -29,7 +29,7 @@ const navLinks = [
   {
     path: "/message",
     title: "Message",
-    icon: <FaCommentDots />,
+    icon: <FaFacebookMessenger />,
   },
   {
     path: "/bookmarks",
