@@ -10,9 +10,7 @@ const usePosts = () => {
   } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await axios(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/posts`
-      );
+      const response = await axios(`http://localhost:5000/posts`);
       return response.data;
     },
   });

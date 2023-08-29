@@ -28,7 +28,7 @@ const RightSide = () => {
         <input
           type="search"
           name="search"
-          placeholder="Search Twitter"
+          placeholder="Search Nh Social"
           className="bg-gray-700 h-10 px-10 pr-5 w-full rounded-full text-sm focus:outline-none bg-purple-white shadow border-0"
         />
       </div>
@@ -198,19 +198,19 @@ const RightSide = () => {
             <div className="flex items-center w-48">
               <div>
                 <Image
-                  width={50}
-                  height={50}
-                  className="inline-block rounded-full ml-4 mt-2"
-                  src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                  width={1000}
+                  height={1000}
+                  className="inline-block w-10 h-10 rounded-full ml-4 mt-2"
+                  src="https://images.pexels.com/photos/428328/pexels-photo-428328.jpeg?auto=compress&cs=tinysrgb&w=1600"
                   alt=""
                 />
               </div>
               <div className="ml-3 mt-3">
                 <p className="text-base leading-6 font-medium text-white">
-                  Sonali Hirave
+                  Nahid Khan
                 </p>
                 <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                  @ShonaDesign
+                  @Nahid123
                 </p>
               </div>
             </div>
@@ -230,19 +230,19 @@ const RightSide = () => {
             <div className="flex items-center w-48">
               <div>
                 <Image
-                  width={50}
-                  height={50}
-                  className="inline-block  rounded-full ml-4 mt-2"
-                  src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                  width={1000}
+                  height={1000}
+                  className="inline-block w-10 h-10 rounded-full ml-4 mt-2"
+                  src="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                   alt=""
                 />
               </div>
               <div className="ml-3 mt-3">
                 <p className="text-base leading-6 font-medium text-white">
-                  Sonali Hirave
+                  Md Arman
                 </p>
                 <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                  @ShonaDesign
+                  @arman321
                 </p>
               </div>
             </div>

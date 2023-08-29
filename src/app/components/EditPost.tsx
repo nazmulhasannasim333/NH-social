@@ -30,9 +30,7 @@ const EditPost: React.FC<EditPostProps> = ({
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(
-            `https://nh-social-server-nazmulhasannasim333.vercel.app/remove_post/${selectedPost._id}`
-          )
+          .delete(`http://localhost:5000/remove_post/${selectedPost._id}`)
           .then((res) => {
             if (res.data.deletedCount > 0) {
               setEditModes(post._id);
