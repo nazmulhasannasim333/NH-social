@@ -98,21 +98,23 @@ const MiddlePost = () => {
                 "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
             };
 
-            axios.post(`http://localhost:5000/post`, status).then((res) => {
-              console.log(res.data);
-              if (res.data.insertedId) {
-                refetch();
-                setInputValue("");
-                setShowEmoji(false);
-                Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: "Your post has been success",
-                  showConfirmButton: false,
-                  timer: 1500,
-                });
-              }
-            });
+            axios
+              .post(`https://nh-social-server.vercel.app/post`, status)
+              .then((res) => {
+                console.log(res.data);
+                if (res.data.insertedId) {
+                  refetch();
+                  setInputValue("");
+                  setShowEmoji(false);
+                  Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Your post has been success",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
+              });
           }
         });
     } else {
@@ -125,21 +127,23 @@ const MiddlePost = () => {
         user_photo:
           "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       };
-      axios.post(`http://localhost:5000/post`, status).then((res) => {
-        console.log(res.data);
-        if (res.data.insertedId) {
-          refetch();
-          setInputValue("");
-          setShowEmoji(false);
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Your post has been success",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        }
-      });
+      axios
+        .post(`https://nh-social-server.vercel.app/post`, status)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            refetch();
+            setInputValue("");
+            setShowEmoji(false);
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Your post has been success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        });
     }
   };
 
