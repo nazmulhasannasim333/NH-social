@@ -1,10 +1,45 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
+import { loginUser } from "@/src/firebase/firebaseAuth";
 import Lottie from "lottie-react";
 import Link from "next/link";
-import login from "../../../../public/images/animation_llpcwk02.json";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import loginLottie from "../../../../public/images/animation_llpcwk02.json";
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
+  const [showError, setShowError] = useState("");
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+    setShowError("");
+    loginUser(data.email, data.password)
+      .then((result) => {
+        const loginUser = result.user;
+        reset();
+        router.push("/");
+        console.log(loginUser);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowError(err.message);
+      });
+  };
+
   return (
     <div className="lg:flex justify-between items-center lg:h-[calc(100vh-68px)] py-10 lg:py-0">
       <div className="lg:w-1/2">
@@ -17,12 +52,13 @@ const LoginPage = () => {
             <Link href="/">NH Social</Link>
           </div>
           <div className="mt-12">
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <div className=" font-semibold text-gray-300 tracking-wide text-lg">
                   Email
                 </div>
                 <input
+                  {...register("email")}
                   type="email"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="example@gmail.com"
@@ -40,6 +76,7 @@ const LoginPage = () => {
                   </div>
                 </div>
                 <input
+                  {...register("password")}
                   type="password"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your password"
@@ -55,6 +92,9 @@ const LoginPage = () => {
                 </button>
               </div>
             </form>
+            <p className="text-center text-red-500 pt-5">
+              {showError && showError}
+            </p>
             <div className="mt-12 text-sm font-display font-semibold text-gray-500 text-center">
               Don't have an account ?{" "}
               <Link
@@ -69,7 +109,7 @@ const LoginPage = () => {
       </div>
       <div className=" lg:w-1/2 items-center justify-center bg-transparent">
         <div className="w-full">
-          <Lottie animationData={login} loop={true} />
+          <Lottie animationData={loginLottie} loop={true} />
         </div>
       </div>
     </div>

@@ -1,14 +1,19 @@
+"use client";
+
+import { RootState } from "@/src/redux/store";
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { Post } from "./MiddlePost/page";
+import PostModal from "./PostModal";
 
 interface EditPostProps {
   editModes: boolean;
   post: Post;
   refetch: () => void;
-  setEditModes: (postId: string) => void; // Add this line
+  setEditModes: (postId: string) => void;
 }
 
 const EditPost: React.FC<EditPostProps> = ({
@@ -17,6 +22,9 @@ const EditPost: React.FC<EditPostProps> = ({
   post,
   refetch,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
+
   // delete a post
   const handleDelete = (selectedPost: Post) => {
     Swal.fire({
@@ -31,7 +39,7 @@ const EditPost: React.FC<EditPostProps> = ({
       if (result.isConfirmed) {
         axios
           .delete(
-            `https://nh-social-server.vercel.app/remove_post/${selectedPost._id}`
+            `https://nh-social-server-nazmulhasannasim333.vercel.app/remove_post/${selectedPost._id}/${user?.email}`
           )
           .then((res) => {
             if (res.data.deletedCount > 0) {
@@ -44,26 +52,38 @@ const EditPost: React.FC<EditPostProps> = ({
     });
   };
 
-  // Edit a post
-
   return (
     <>
       {editModes && (
-        <div className="bg-slate-800 p-3 absolute right-10 top-12">
-          <ul>
-            <li className="flex items-center hover:cursor-pointer">
-              <FaEdit />
-              <span className="ms-2">Edit Post</span>
-            </li>
-            <li
-              onClick={() => handleDelete(post)}
-              className="flex items-center mt-2 hover:cursor-pointer"
-            >
-              <FaTrash />
-              <span className="ms-2">Delete Post</span>
-            </li>
-          </ul>
-        </div>
+        <>
+          {post?.user_email === user?.email && (
+            <div className="bg-slate-800 p-3 absolute right-10 top-12">
+              <ul>
+                <li
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="flex items-center hover:cursor-pointer"
+                >
+                  <FaEdit />
+                  <span className="ms-2">Edit Post</span>
+                </li>
+                <li
+                  onClick={() => handleDelete(post)}
+                  className="flex items-center mt-2 hover:cursor-pointer"
+                >
+                  <FaTrash />
+                  <span className="ms-2">Delete Post</span>
+                </li>
+                <PostModal
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                  post={post}
+                  refetch={refetch}
+                  setEditModes={setEditModes}
+                />
+              </ul>
+            </div>
+          )}
+        </>
       )}
     </>
   );

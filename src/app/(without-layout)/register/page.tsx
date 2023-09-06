@@ -1,14 +1,73 @@
 "use client";
+import {
+  createUser,
+  logoutUser,
+  profileUpdate,
+} from "@/src/firebase/firebaseAuth";
+import axios from "axios";
 import Lottie from "lottie-react";
 import Link from "next/link";
-import register from "../../../../public/images/animation_llpei2ae.json";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import registerLottie from "../../../../public/images/animation_llpei2ae.json";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+};
 
 const Register = () => {
+  const [showError, setShowError] = useState("");
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    console.log(data);
+
+    axios
+      .post("https://nh-social-server-nazmulhasannasim333.vercel.app/user", {
+        name: data.name,
+        email: data.email,
+        photo: "",
+        date: new Date(),
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+
+    setShowError("");
+    createUser(data.email, data.password)
+      .then((result) => {
+        const signupUser = result.user;
+        reset();
+        console.log(signupUser);
+        profileUpdate(data.name)
+          .then(() => {
+            console.log("profile updated");
+            logoutUser();
+            router.push("/login");
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setShowError(error.message);
+      });
+  };
+
   return (
     <div className="lg:flex justify-between items-center lg:h-[calc(100vh-68px)] py-10 lg:py-0">
       <div className=" lg:w-1/2 items-center justify-center bg-transparent">
         <div className="w-full">
-          <Lottie animationData={register} loop={true} />
+          <Lottie animationData={registerLottie} loop={true} />
         </div>
       </div>
       <div className="lg:w-1/2">
@@ -21,12 +80,13 @@ const Register = () => {
             <Link href="/">NH Social</Link>
           </h2>
           <div className="mt-12">
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <div className=" font-semibold text-gray-300 tracking-wide text-lg">
                   Name
                 </div>
                 <input
+                  {...register("name")}
                   type="text"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your name"
@@ -37,6 +97,7 @@ const Register = () => {
                   Email
                 </div>
                 <input
+                  {...register("email")}
                   type="email"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="example@gmail.com"
@@ -47,6 +108,7 @@ const Register = () => {
                   Password
                 </div>
                 <input
+                  {...register("password")}
                   type="password"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your password"
@@ -62,6 +124,9 @@ const Register = () => {
                 </button>
               </div>
             </form>
+            <p className="text-center text-red-500 pt-5">
+              {showError && showError}
+            </p>
             <div className="mt-12 text-sm font-display font-semibold text-gray-500 text-center">
               Already have an account ?{" "}
               <Link

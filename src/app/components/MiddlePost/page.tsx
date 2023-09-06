@@ -1,5 +1,7 @@
 "use client";
+import useAxiosSecure from "@/src/hooks/useAxiosSecure";
 import usePosts from "@/src/hooks/usePosts";
+import { RootState } from "@/src/redux/store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import axios from "axios";
@@ -15,6 +17,7 @@ import {
   FaRegBell,
   FaUserCheck,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import EditPost from "../EditPost";
 import Like from "../Like";
@@ -35,10 +38,7 @@ export interface Post {
   name: string;
   user_name: string;
 }
-interface EditPostProps {
-  showEdit: boolean;
-  post: Post;
-}
+
 type FormData = {
   tweetText: string;
   photo: string;
@@ -49,6 +49,8 @@ const MiddlePost = () => {
   const [inputValue, setInputValue] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
+  const [axiosSecure] = useAxiosSecure();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   // Function to handle "Edit" button click
   const handleEditClick = (postId: string) => {
@@ -86,20 +88,24 @@ const MiddlePost = () => {
         .then((res) => res.json())
         .then((phostPhoto) => {
           if (phostPhoto.success) {
-            const profileURL = phostPhoto.data.display_url;
+            const postURL = phostPhoto.data.display_url;
             const { tweetText: post_text, photo: post_photo } = data;
             const status = {
               post_text,
-              post_photo: profileURL,
-              name: "MD Arman Hosen",
+              post_photo: postURL,
+              name: user?.displayName,
               user_name: "@NHnasim333",
-              user_email: "nasim123@gmail.com",
+              user_email: user?.email,
               user_photo:
+                user?.photoURL ||
                 "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
             };
 
             axios
-              .post(`https://nh-social-server.vercel.app/post`, status)
+              .post(
+                `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
+                status
+              )
               .then((res) => {
                 console.log(res.data);
                 if (res.data.insertedId) {
@@ -109,7 +115,7 @@ const MiddlePost = () => {
                   Swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Your post has been success",
+                    title: "Your post has been successful",
                     showConfirmButton: false,
                     timer: 1500,
                   });
@@ -121,14 +127,18 @@ const MiddlePost = () => {
       const { tweetText: post_text } = data;
       const status = {
         post_text,
-        name: "MD Nasim Hosen",
+        name: user?.displayName,
         user_name: "@NHnasim333",
-        user_email: "nasim123@gmail.com",
+        user_email: user?.email,
         user_photo:
+          user?.photoURL ||
           "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       };
       axios
-        .post(`https://nh-social-server.vercel.app/post`, status)
+        .post(
+          `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
+          status
+        )
         .then((res) => {
           console.log(res.data);
           if (res.data.insertedId) {

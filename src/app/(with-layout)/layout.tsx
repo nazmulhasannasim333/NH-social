@@ -12,19 +12,15 @@ export const metadata: Metadata = {
 
 const WithLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="bg-gray-900 text-white min-h-screen">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-8 grid-cols-1">
-              <LeftSide />
-              {children}
-              <RightSide />
-            </div>
-          </div>
+    <div className="bg-gray-900 text-white min-h-screen">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-8 grid-cols-1">
+          <LeftSide />
+          {children}
+          <RightSide />
         </div>
-      </body>
-    </html>
+      </div>
+    </div>
   );
 };
 

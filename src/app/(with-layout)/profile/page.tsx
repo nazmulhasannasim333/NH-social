@@ -1,3 +1,6 @@
+"use client";
+
+import { RootState } from "@/src/redux/store";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,12 +11,15 @@ import {
   FaRegBell,
   FaUserCheck,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 export const metadata: Metadata = {
   title: "NH Social || Profile",
   description: "NH Social App",
 };
 
 const ProfilePage = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
+  console.log(user?.email);
   return (
     <div className="col-span-4 h-auto border border-y-0 border-gray-800">
       {/*Content (Center)*/}
@@ -30,7 +36,7 @@ const ProfilePage = () => {
           </div>
           <div className="m-2">
             <h2 className="mb-0 text-xl font-bold text-white">
-              MD Nasim Hosen
+              {user && user?.displayName}
             </h2>
             <p className="mb-0 w-48 text-xs text-gray-400">9,416 Tweets</p>
           </div>
@@ -88,7 +94,7 @@ const ProfilePage = () => {
             {/* User basic*/}
             <div>
               <h2 className="text-xl leading-6 font-bold text-white">
-                Md Nasim Hosen
+                {user && user?.displayName}
               </h2>
               <p className="text-sm leading-5 font-medium text-gray-600">
                 @NHnasim333

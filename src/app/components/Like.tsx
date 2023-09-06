@@ -1,3 +1,4 @@
+import { RootState } from "@/src/redux/store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import axios from "axios";
@@ -11,6 +12,7 @@ import {
   FaRegHeart,
   FaTelegram,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 interface LikeProps {
   post: {
@@ -33,13 +35,14 @@ type Comment = {
 };
 
 const Like: React.FC<LikeProps> = ({ post }) => {
-  const [showLike, setShowLike] = useState(true);
+  const [showLike, setShowLike] = useState(false);
   const [showComment, setShowComment] = useState(false);
   const [totalLikes, setTotalLikes] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [totalComments, setTotalComments] = useState(null);
   const [comments, setComments] = useState<Comment[] | null>(null);
+  const { user } = useSelector((state: RootState) => state.auth);
   // console.log(comments);
 
   //  ---------------- ** Like Related Functionalities Start ** ------------------------
@@ -47,18 +50,23 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   const handleLike = (id: string) => {
     const postLike = {
       postId: id,
-      user_email: post.user_email,
-      name: post.name,
+      email: user?.email,
+      name: user?.displayName,
     };
     axios
-      .post("https://nh-social-server.vercel.app/like", postLike)
+      .post(
+        "https://nh-social-server-nazmulhasannasim333.vercel.app/like",
+        postLike
+      )
       .then((res) => {
         console.log(res.data);
         if (res.data.insertedId) {
           setShowLike(true);
         }
         axios
-          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
+          .get(
+            `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
+          )
           .then((response) => {
             setTotalLikes(response.data.totalLikes);
           });
@@ -67,9 +75,10 @@ const Like: React.FC<LikeProps> = ({ post }) => {
 
   // handle unlike function
   const handleUnlike = (id: string) => {
+    console.log(id);
     axios
       .delete(
-        `https://nh-social-server.vercel.app/unlike/${id}/${post.user_email}`
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/unlike/${id}/${user?.email}`
       )
       .then((res) => {
         console.log(res.data);
@@ -77,7 +86,9 @@ const Like: React.FC<LikeProps> = ({ post }) => {
           setShowLike(false);
         }
         axios
-          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
+          .get(
+            `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
+          )
           .then((response) => {
             setTotalLikes(response.data.totalLikes);
           });
@@ -87,7 +98,9 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get post total likes
   useEffect(() => {
     axios
-      .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
+      .get(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
+      )
       .then((response) => {
         setTotalLikes(response.data.totalLikes);
       });
@@ -96,12 +109,15 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // Check if the post is liked by the user
   useEffect(() => {
     axios
-      .get(`https://nh-social-server.vercel.app/userLiked/nasim123@gmail.com`)
+      .get(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/userLiked/${user?.email}`
+      )
       .then((response) => {
         const likedPosts = response.data.map((like: any) => like._id);
         setShowLike(likedPosts.includes(post._id));
       });
-  }, [post._id]);
+  }, [post._id, user?.email]);
+
   //  ---------------- ** Like Related Functionalities End ** ------------------------
 
   //  ---------------- ** Comment Related Functionalities Start ** -------------------
@@ -125,14 +141,18 @@ const Like: React.FC<LikeProps> = ({ post }) => {
       postId: post._id,
       comment_text,
       user_photo:
+        user?.photoURL ||
         "https://images.pexels.com/photos/12242786/pexels-photo-12242786.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: "MD Arman Hossain",
+      name: user?.displayName,
       user_name: "@NHnasim333",
-      user_email: "nasim123@gmail.com",
+      email: user?.email,
     };
     console.log(comment);
     axios
-      .post(`https://nh-social-server.vercel.app/comment`, comment)
+      .post(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/comment`,
+        comment
+      )
       .then((res) => {
         // console.log(res.data);
         if (res.data.insertedId) {
@@ -142,14 +162,16 @@ const Like: React.FC<LikeProps> = ({ post }) => {
           // get total comment number refetch
           axios
             .get(
-              `https://nh-social-server.vercel.app/total_comments/${post?._id}`
+              `https://nh-social-server-nazmulhasannasim333.vercel.app/total_comments/${post?._id}`
             )
             .then((response) => {
               setTotalComments(response.data.totalComments);
             });
           // get comment refetch
           axios
-            .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
+            .get(
+              `https://nh-social-server-nazmulhasannasim333.vercel.app/comments/${post?._id}`
+            )
             .then((response) => {
               setComments(response.data);
             });
@@ -160,7 +182,9 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get post total comment number
   useEffect(() => {
     axios
-      .get(`https://nh-social-server.vercel.app/total_comments/${post?._id}`)
+      .get(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/total_comments/${post?._id}`
+      )
       .then((response) => {
         setTotalComments(response.data.totalComments);
       });
@@ -169,7 +193,9 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get total comment post wise
   useEffect(() => {
     axios
-      .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
+      .get(
+        `https://nh-social-server-nazmulhasannasim333.vercel.app/comments/${post?._id}`
+      )
       .then((response) => {
         setComments(response.data);
       });
