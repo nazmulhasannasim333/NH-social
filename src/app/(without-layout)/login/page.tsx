@@ -2,17 +2,16 @@
 "use client";
 import { loginUser } from "@/src/firebase/firebaseAuth";
 import Lottie from "lottie-react";
-import { Metadata } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import loginLottie from "../../../../public/images/animation_llpcwk02.json";
 
-export const metadata: Metadata = {
-  title: "NH Social || Login",
-  description: "NH Social App",
-};
+// export const metadata: Metadata = {
+//   title: "NH Social || Login",
+//   description: "NH Social App",
+// };
 
 type FormData = {
   email: string;

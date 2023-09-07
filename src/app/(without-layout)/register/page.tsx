@@ -6,17 +6,16 @@ import {
 } from "@/src/firebase/firebaseAuth";
 import axios from "axios";
 import Lottie from "lottie-react";
-import { Metadata } from "next";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import registerLottie from "../../../../public/images/animation_llpei2ae.json";
 
-export const metadata: Metadata = {
-  title: "NH Social || Register",
-  description: "NH Social App",
-};
+// export const metadata: Metadata = {
+//   title: "NH Social || Register",
+//   description: "NH Social App",
+// };
 
 type FormData = {
   name: string;
