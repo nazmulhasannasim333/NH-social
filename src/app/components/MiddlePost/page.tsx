@@ -243,7 +243,7 @@ const MiddlePost = () => {
               </div>
             </div>
             {showEmoji && (
-              <div className="absolute">
+              <div className="absolute z-50">
                 <Picker
                   data={data}
                   emojiSize={20}

@@ -1,9 +1,8 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "./useAxiosSecure";
+import axios from "axios";
 
 const usePosts = () => {
-  const [axiosSecure] = useAxiosSecure();
   const {
     data: posts = [],
     isLoading,
@@ -11,7 +10,7 @@ const usePosts = () => {
   } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await axiosSecure(`/posts`);
+      const response = await axios(`https://nh-social-server.vercel.app/posts`);
       return response.data;
     },
   });
