@@ -102,10 +102,7 @@ const MiddlePost = () => {
             };
 
             axios
-              .post(
-                `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
-                status
-              )
+              .post(`https://nh-social-server.vercel.app/post`, status)
               .then((res) => {
                 console.log(res.data);
                 if (res.data.insertedId) {
@@ -135,10 +132,7 @@ const MiddlePost = () => {
           "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
       };
       axios
-        .post(
-          `https://nh-social-server-nazmulhasannasim333.vercel.app/post`,
-          status
-        )
+        .post(`https://nh-social-server.vercel.app/post`, status)
         .then((res) => {
           console.log(res.data);
           if (res.data.insertedId) {

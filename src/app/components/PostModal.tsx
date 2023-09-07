@@ -44,7 +44,7 @@ const PostModal: React.FC<PostModalProps> = ({
     };
     axios
       .put(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/update_post/${post._id}`,
+        `https://nh-social-server.vercel.app/update_post/${post._id}`,
         status
       )
       .then((res) => {

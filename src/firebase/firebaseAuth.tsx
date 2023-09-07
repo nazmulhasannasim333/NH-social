@@ -20,12 +20,10 @@ export const initAuthListener = () => {
   onAuthStateChanged(auth, (user) => {
     store.dispatch(setUser(user));
     if (user) {
-      axios
-        .post(`https://nh-social-server-nazmulhasannasim333.vercel.app/jwt`)
-        .then((res) => {
-          localStorage.setItem("access-token", res.data.token);
-          store.dispatch(setLoading(false));
-        });
+      axios.post(`https://nh-social-server.vercel.app/jwt`).then((res) => {
+        localStorage.setItem("access-token", res.data.token);
+        store.dispatch(setLoading(false));
+      });
     } else {
       localStorage.removeItem("access-token");
     }

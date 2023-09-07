@@ -54,19 +54,14 @@ const Like: React.FC<LikeProps> = ({ post }) => {
       name: user?.displayName,
     };
     axios
-      .post(
-        "https://nh-social-server-nazmulhasannasim333.vercel.app/like",
-        postLike
-      )
+      .post("https://nh-social-server.vercel.app/like", postLike)
       .then((res) => {
         console.log(res.data);
         if (res.data.insertedId) {
           setShowLike(true);
         }
         axios
-          .get(
-            `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
-          )
+          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
           .then((response) => {
             setTotalLikes(response.data.totalLikes);
           });
@@ -77,18 +72,14 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   const handleUnlike = (id: string) => {
     console.log(id);
     axios
-      .delete(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/unlike/${id}/${user?.email}`
-      )
+      .delete(`https://nh-social-server.vercel.app/unlike/${id}/${user?.email}`)
       .then((res) => {
         console.log(res.data);
         if (res.data.deletedCount > 0) {
           setShowLike(false);
         }
         axios
-          .get(
-            `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
-          )
+          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
           .then((response) => {
             setTotalLikes(response.data.totalLikes);
           });
@@ -98,9 +89,7 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get post total likes
   useEffect(() => {
     axios
-      .get(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/likes/${post?._id}`
-      )
+      .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
       .then((response) => {
         setTotalLikes(response.data.totalLikes);
       });
@@ -109,9 +98,7 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // Check if the post is liked by the user
   useEffect(() => {
     axios
-      .get(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/userLiked/${user?.email}`
-      )
+      .get(`https://nh-social-server.vercel.app/userLiked/${user?.email}`)
       .then((response) => {
         const likedPosts = response.data.map((like: any) => like._id);
         setShowLike(likedPosts.includes(post._id));
@@ -149,10 +136,7 @@ const Like: React.FC<LikeProps> = ({ post }) => {
     };
     console.log(comment);
     axios
-      .post(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/comment`,
-        comment
-      )
+      .post(`https://nh-social-server.vercel.app/comment`, comment)
       .then((res) => {
         // console.log(res.data);
         if (res.data.insertedId) {
@@ -162,16 +146,14 @@ const Like: React.FC<LikeProps> = ({ post }) => {
           // get total comment number refetch
           axios
             .get(
-              `https://nh-social-server-nazmulhasannasim333.vercel.app/total_comments/${post?._id}`
+              `https://nh-social-server.vercel.app/total_comments/${post?._id}`
             )
             .then((response) => {
               setTotalComments(response.data.totalComments);
             });
           // get comment refetch
           axios
-            .get(
-              `https://nh-social-server-nazmulhasannasim333.vercel.app/comments/${post?._id}`
-            )
+            .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
             .then((response) => {
               setComments(response.data);
             });
@@ -182,9 +164,7 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get post total comment number
   useEffect(() => {
     axios
-      .get(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/total_comments/${post?._id}`
-      )
+      .get(`https://nh-social-server.vercel.app/total_comments/${post?._id}`)
       .then((response) => {
         setTotalComments(response.data.totalComments);
       });
@@ -193,9 +173,7 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   // get total comment post wise
   useEffect(() => {
     axios
-      .get(
-        `https://nh-social-server-nazmulhasannasim333.vercel.app/comments/${post?._id}`
-      )
+      .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
       .then((response) => {
         setComments(response.data);
       });

@@ -33,7 +33,7 @@ const Register = () => {
     console.log(data);
 
     axios
-      .post("https://nh-social-server-nazmulhasannasim333.vercel.app/user", {
+      .post("https://nh-social-server.vercel.app/user", {
         name: data.name,
         email: data.email,
         photo: "",
