@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CgMoreO } from "react-icons/cg";
 import {
   FaClipboardList,
@@ -56,6 +57,11 @@ const navLinks = [
 const Navbar = () => {
   return (
     <div className=" px-2">
+      <div className="text-3xl font-bold mb-5 text-orange-500">
+        <Link href="/">
+          NH <span className="text-sky-400">Social</span>
+        </Link>
+      </div>
       {navLinks.map((link, index) => (
         <NavLink
           key={index}

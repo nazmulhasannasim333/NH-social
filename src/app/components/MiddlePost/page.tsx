@@ -1,5 +1,5 @@
 "use client";
-import useAxiosSecure from "@/src/hooks/useAxiosSecure";
+import { logoutUser } from "@/src/firebase/firebaseAuth";
 import usePosts from "@/src/hooks/usePosts";
 import { RootState } from "@/src/redux/store";
 import data from "@emoji-mart/data";
@@ -7,18 +7,21 @@ import Picker from "@emoji-mart/react";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsCameraVideo, BsEmojiLaughing } from "react-icons/bs";
 import {
   FaFacebookMessenger,
   FaHome,
-  FaPhotoVideo,
   FaRegBell,
-  FaUserCheck,
+  FaSearch,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import avatar from "../../../../public/images/avatar.png";
+import gallery from "../../../../public/images/gallery.png";
+import verified from "../../../../public/images/verified.png";
 import EditPost from "../EditPost";
 import Like from "../Like";
 declare global {
@@ -49,8 +52,16 @@ const MiddlePost = () => {
   const [inputValue, setInputValue] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
-  const [axiosSecure] = useAxiosSecure();
   const { user } = useSelector((state: RootState) => state.auth);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [inputImage, setInputImage] = useState<File | string>("");
+  const router = useRouter();
+
+  const handleSignout = () => {
+    logoutUser().then(() => {
+      console.log("Logout Successful");
+    });
+  };
 
   // Function to handle "Edit" button click
   const handleEditClick = (postId: string) => {
@@ -77,77 +88,109 @@ const MiddlePost = () => {
   } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    // console.log(data.photo.length);
-    if (data.photo.length > 0) {
-      const formData = new FormData();
-      formData.append("image", data.photo[0]);
-      fetch(image_upload_url, {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((phostPhoto) => {
-          if (phostPhoto.success) {
-            const postURL = phostPhoto.data.display_url;
-            const { tweetText: post_text, photo: post_photo } = data;
-            const status = {
-              post_text,
-              post_photo: postURL,
-              name: user?.displayName,
-              user_name: "@NHnasim333",
-              user_email: user?.email,
-              user_photo:
-                user?.photoURL ||
-                "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-            };
-
-            axios
-              .post(`https://nh-social-server.vercel.app/post`, status)
-              .then((res) => {
-                console.log(res.data);
-                if (res.data.insertedId) {
-                  refetch();
-                  setInputValue("");
-                  setShowEmoji(false);
-                  Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Your post has been successful",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-                }
-              });
-          }
-        });
+    console.log(data);
+    if (!user) {
+      Swal.fire({
+        title: "Please Login first then post something",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sign In",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login");
+        }
+      });
     } else {
-      const { tweetText: post_text } = data;
-      const status = {
-        post_text,
-        name: user?.displayName,
-        user_name: "@NHnasim333",
-        user_email: user?.email,
-        user_photo:
-          user?.photoURL ||
-          "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      };
-      axios
-        .post(`https://nh-social-server.vercel.app/post`, status)
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.insertedId) {
-            refetch();
-            setInputValue("");
-            setShowEmoji(false);
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: "Your post has been success",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          }
-        });
+      if (inputImage) {
+        const formData = new FormData();
+        formData.append("image", inputImage);
+        fetch(image_upload_url, {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((phostPhoto) => {
+            if (phostPhoto.success) {
+              const postURL = phostPhoto.data.display_url;
+              const { tweetText: post_text, photo: post_photo } = data;
+              const status = {
+                post_text,
+                post_photo: postURL,
+                name: user?.displayName,
+                user_name: "@NHnasim333",
+                user_email: user?.email,
+                user_photo:
+                  user?.photoURL ||
+                  "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+              };
+
+              axios
+                .post(`https://nh-social-server.vercel.app/post`, status)
+                .then((res) => {
+                  console.log(res.data);
+                  if (res.data.insertedId) {
+                    refetch();
+                    setInputValue("");
+                    setShowEmoji(false);
+                    setInputImage("");
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Your post has been successful",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                  }
+                });
+            }
+          });
+      } else {
+        const { tweetText: post_text } = data;
+        const status = {
+          post_text,
+          name: user?.displayName,
+          user_name: "@NHnasim333",
+          user_email: user?.email,
+          user_photo:
+            user?.photoURL ||
+            "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        };
+        axios
+          .post(`https://nh-social-server.vercel.app/post`, status)
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.insertedId) {
+              refetch();
+              setInputValue("");
+              setShowEmoji(false);
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Your post has been success",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          });
+      }
+    }
+  };
+
+  // post a image
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedImage = event.target.files && event.target.files[0];
+    console.log(selectedImage);
+    if (selectedImage) {
+      setInputImage(selectedImage);
+    }
+  };
+
+  // click on a image
+  const handleImageClick = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
     }
   };
 
@@ -156,28 +199,22 @@ const MiddlePost = () => {
       {/*middle wall*/}
       <div className="flex sticky top-0 z-50 bg-gray-900 shadow-xl">
         <div className="w-1/3 m-2">
-          <h2 className="px-4 py-2 text-2xl font-bold text-white">
+          <h2 className="px-4 py-2 text-2xl font-bold text-white hidden lg:block">
             <Link href="/">Home</Link>
           </h2>
+          <h2 className="ps-2 py-2 text-lg font-bold text-orange-500 lg:hidden block">
+            <Link href="/">
+              {" "}
+              NH <span className="text-sky-400">Social</span>
+            </Link>
+          </h2>
         </div>
+        {/* <div className="text-xl font-bold mb-5  lg:hidden block">
+         
+        </div> */}
         <div className="w-2/3 px-4 py-2 m-2">
           <button type="submit" className="absolute ml-4 mt-3 mr-4">
-            <svg
-              className="h-4 w-4 fill-current"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlnsXlink="http://www.w3.org/1999/xlink"
-              version="1.1"
-              id="Capa_1"
-              x="0px"
-              y="0px"
-              viewBox="0 0 56.966 56.966"
-              // style={{ enableBackground: "new 0 0 56.966 56.966" }}
-              xmlSpace="preserve"
-              width="512px"
-              height="512px"
-            >
-              <path d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z" />
-            </svg>
+            <FaSearch />
           </button>
           <input
             type="search"
@@ -193,10 +230,10 @@ const MiddlePost = () => {
         <div className="flex">
           <div className="m-2 w-10 py-1">
             <Image
-              height={50}
-              width={50}
+              height={100}
+              width={100}
               className="inline-block rounded-full"
-              src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+              src={user && user.photoURL ? user?.photoURL : avatar}
               alt=""
             />
           </div>
@@ -213,6 +250,18 @@ const MiddlePost = () => {
             />
           </div>
         </div>
+        {inputImage && (
+          <div>
+            <Image
+              height={1000}
+              width={1000}
+              className="rounded-md h-24 w-28 ms-10"
+              src={inputImage ? URL.createObjectURL(inputImage as File) : ""}
+              alt="Photo is brocken"
+            />
+          </div>
+        )}
+
         {/*middle creat tweet below icons*/}
         <div className="flex">
           <div className="w-10" />
@@ -223,13 +272,24 @@ const MiddlePost = () => {
                   <BsCameraVideo className="text-2xl" />
                 </span>
               </div>
-              <div className="ms-5 text-center py-2 m-2 relative">
+              <div
+                onClick={handleImageClick}
+                className="ms-5 text-center py-2 m-2 relative"
+              >
                 <span className="mt-1 text-blue-400 hover:cursor-pointer">
-                  <FaPhotoVideo type="file" className="text-2xl" />
+                  {/* <FaPhotoVideo type="file" className="text-2xl" /> */}
+                  <Image
+                    height={100}
+                    width={100}
+                    className="rounded-md h-6 w-6"
+                    src={gallery}
+                    alt="Photo is brocken"
+                  />
                   <input
-                    {...register("photo")}
+                    ref={inputRef}
+                    onChange={handleImageChange}
                     type="file"
-                    className="h-4 w-4 z-10 border-2 blue-600 border-blue-400 absolute right-1 bottom-3"
+                    className="h-4 w-4 z-10 border-2 blue-600 border-blue-400 hidden"
                   />
                 </span>
               </div>
@@ -280,17 +340,27 @@ const MiddlePost = () => {
                 <div className="flex items-center">
                   <div>
                     <Image
-                      width={50}
-                      height={50}
+                      width={100}
+                      height={100}
                       className="h-10 w-10 rounded-full"
-                      src={post?.user_photo}
+                      src={post?.user_photo || avatar}
                       alt=""
                     />
                   </div>
                   <div className="ml-3">
-                    <p className="text-base leading-6 font-medium text-white">
-                      {post?.name}
-                    </p>
+                    <div className="flex items-center gap-1">
+                      <p className="text-base leading-6 font-medium text-white">
+                        {post?.name}
+                      </p>
+                      <Image
+                        width={100}
+                        height={100}
+                        className="h-3.5 w-3.5 rounded-full"
+                        src={verified}
+                        alt="verified"
+                        title="NH Social confirmed this profile is authentic"
+                      />
+                    </div>
                     <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
                       {post?.user_name} - 16 April 2023
                     </span>
@@ -338,23 +408,49 @@ const MiddlePost = () => {
               <FaHome />
             </Link>
             <Link
-              href="/notification"
+              href="/"
               className="text-xl p-2.5 rounded-full sm:cursor-pointer"
             >
               <FaRegBell />
             </Link>
             <Link
-              href="/message"
+              href="/"
               className="text-xl p-2.5 rounded-full sm:cursor-pointer"
             >
               <FaFacebookMessenger />
             </Link>
-            <Link
-              href="/profile"
-              className="text-xl p-2.5 rounded-full sm:cursor-pointer"
-            >
-              <FaUserCheck />
-            </Link>
+
+            <div className="dropdown dropdown-top">
+              <div className="flex items-center">
+                <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                  <div className="w-8 rounded-full">
+                    <Image
+                      width={100}
+                      height={100}
+                      src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                      alt=""
+                    />
+                  </div>
+                </label>
+              </div>
+              <ul
+                tabIndex={0}
+                className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content rounded-box w-52 bg-gray-800 text-white"
+              >
+                <li className="my-2">
+                  <Link href={user ? "/profile" : "/login"}>Profile</Link>
+                </li>
+                <li className="mb-2">
+                  {user ? (
+                    <Link onClick={handleSignout} href="login">
+                      Logout
+                    </Link>
+                  ) : (
+                    <Link href="login">Login</Link>
+                  )}
+                </li>
+              </ul>
+            </div>
           </nav>
         </>
       ) : (

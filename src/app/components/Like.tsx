@@ -3,6 +3,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsEmojiLaughing } from "react-icons/bs";
@@ -13,6 +14,7 @@ import {
   FaTelegram,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 interface LikeProps {
   post: {
@@ -43,47 +45,79 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   const [totalComments, setTotalComments] = useState(null);
   const [comments, setComments] = useState<Comment[] | null>(null);
   const { user } = useSelector((state: RootState) => state.auth);
+  const router = useRouter();
   // console.log(comments);
 
   //  ---------------- ** Like Related Functionalities Start ** ------------------------
   // handle like function
   const handleLike = (id: string) => {
-    const postLike = {
-      postId: id,
-      email: user?.email,
-      name: user?.displayName,
-    };
-    axios
-      .post("https://nh-social-server.vercel.app/like", postLike)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.insertedId) {
-          setShowLike(true);
+    if (!user) {
+      Swal.fire({
+        title: "Please Login first then like this post",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sign In",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login");
         }
-        axios
-          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
-          .then((response) => {
-            setTotalLikes(response.data.totalLikes);
-          });
       });
+    } else {
+      const postLike = {
+        postId: id,
+        email: user?.email,
+        name: user?.displayName,
+      };
+      axios
+        .post("https://nh-social-server.vercel.app/like", postLike)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            setShowLike(true);
+          }
+          axios
+            .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
+            .then((response) => {
+              setTotalLikes(response.data.totalLikes);
+            });
+        });
+    }
   };
 
   // handle unlike function
   const handleUnlike = (id: string) => {
-    console.log(id);
-    axios
-      .delete(`https://nh-social-server.vercel.app/unlike/${id}/${user?.email}`)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.deletedCount > 0) {
-          setShowLike(false);
+    if (!user) {
+      Swal.fire({
+        title: "Please Login first then unlike this post",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sign In",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login");
         }
-        axios
-          .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
-          .then((response) => {
-            setTotalLikes(response.data.totalLikes);
-          });
       });
+    } else {
+      axios
+        .delete(
+          `https://nh-social-server.vercel.app/unlike/${id}/${user?.email}`
+        )
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.deletedCount > 0) {
+            setShowLike(false);
+          }
+          axios
+            .get(`https://nh-social-server.vercel.app/likes/${post?._id}`)
+            .then((response) => {
+              setTotalLikes(response.data.totalLikes);
+            });
+        });
+    }
   };
 
   // get post total likes
@@ -123,42 +157,57 @@ const Like: React.FC<LikeProps> = ({ post }) => {
   } = useForm<FormData>();
   // onsubmit a comment
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    const { commentText: comment_text } = data;
-    const comment = {
-      postId: post._id,
-      comment_text,
-      user_photo:
-        user?.photoURL ||
-        "https://images.pexels.com/photos/12242786/pexels-photo-12242786.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      name: user?.displayName,
-      user_name: "@NHnasim333",
-      email: user?.email,
-    };
-    console.log(comment);
-    axios
-      .post(`https://nh-social-server.vercel.app/comment`, comment)
-      .then((res) => {
-        // console.log(res.data);
-        if (res.data.insertedId) {
-          reset();
-          setInputValue("");
-          setShowEmoji(false);
-          // get total comment number refetch
-          axios
-            .get(
-              `https://nh-social-server.vercel.app/total_comments/${post?._id}`
-            )
-            .then((response) => {
-              setTotalComments(response.data.totalComments);
-            });
-          // get comment refetch
-          axios
-            .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
-            .then((response) => {
-              setComments(response.data);
-            });
+    if (!user) {
+      Swal.fire({
+        title: "Please Login first then comment in this post",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sign In",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          router.push("/login");
         }
       });
+    } else {
+      const { commentText: comment_text } = data;
+      const comment = {
+        postId: post._id,
+        comment_text,
+        user_photo:
+          user?.photoURL ||
+          "https://images.pexels.com/photos/12242786/pexels-photo-12242786.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+        name: user?.displayName,
+        user_name: "@NHnasim333",
+        email: user?.email,
+      };
+      console.log(comment);
+      axios
+        .post(`https://nh-social-server.vercel.app/comment`, comment)
+        .then((res) => {
+          // console.log(res.data);
+          if (res.data.insertedId) {
+            reset();
+            setInputValue("");
+            setShowEmoji(false);
+            // get total comment number refetch
+            axios
+              .get(
+                `https://nh-social-server.vercel.app/total_comments/${post?._id}`
+              )
+              .then((response) => {
+                setTotalComments(response.data.totalComments);
+              });
+            // get comment refetch
+            axios
+              .get(`https://nh-social-server.vercel.app/comments/${post?._id}`)
+              .then((response) => {
+                setComments(response.data);
+              });
+          }
+        });
+    }
   };
 
   // get post total comment number

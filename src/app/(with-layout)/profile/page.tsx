@@ -1,16 +1,23 @@
 "use client";
 
+import { logoutUser } from "@/src/firebase/firebaseAuth";
+import useMyPosts from "@/src/hooks/useMyPost";
 import { RootState } from "@/src/redux/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import {
   FaArrowLeft,
   FaFacebookMessenger,
   FaHome,
   FaRegBell,
-  FaUserCheck,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import avatar from "../../../../public/images/avatar.png";
+import verified from "../../../../public/images/verified.png";
+import EditPost from "../../components/EditPost";
+import Like from "../../components/Like";
+import { Post } from "../../components/MiddlePost/page";
 // export const metadata: Metadata = {
 //   title: "NH Social || Profile",
 //   description: "NH Social App",
@@ -18,7 +25,24 @@ import { useSelector } from "react-redux";
 
 const ProfilePage = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  console.log(user);
+  const [myPost, isLoading, refetch] = useMyPosts();
+  const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
+  console.log(myPost);
+
+  const handleSignout = () => {
+    logoutUser().then(() => {
+      console.log("Logout Successful");
+    });
+  };
+
+  // Function to handle "Edit" button click
+  const handleEditClick = (postId: string) => {
+    setEditModes((prevEditModes) => ({
+      ...prevEditModes,
+      [postId]: !prevEditModes[postId], // Toggle the edit mode for this post
+    }));
+  };
+
   return (
     <div className="col-span-4 h-auto border border-y-0 border-gray-800">
       {/*Content (Center)*/}
@@ -37,7 +61,9 @@ const ProfilePage = () => {
             <h2 className="mb-0 text-xl font-bold text-white">
               {user && user?.displayName}
             </h2>
-            <p className="mb-0 w-48 text-xs text-gray-400">9,416 Tweets</p>
+            <p className="mb-0 w-48 text-xs text-gray-400">
+              {myPost.length} Posts
+            </p>
           </div>
         </div>
         <hr className="border-gray-800" />
@@ -105,7 +131,7 @@ const ProfilePage = () => {
                 Software Engineer / Designer / Entrepreneur <br />
                 Visit my website to test a working <b>Twitter Clone.</b>{" "}
               </p>
-              <div className="text-gray-600 flex">
+              <div className="text-gray-600">
                 <span className="flex mr-2">
                   <svg viewBox="0 0 24 24" className="h-5 w-5 paint-icon">
                     <g>
@@ -117,7 +143,7 @@ const ProfilePage = () => {
                     www.RicardoRibeiroDEV.com
                   </span>
                 </span>
-                <span className="flex mr-2">
+                <span className="flex mr-2 mt-2">
                   <svg viewBox="0 0 24 24" className="h-5 w-5 paint-icon">
                     <g>
                       <path d="M19.708 2H4.292C3.028 2 2 3.028 2 4.292v15.416C2 20.972 3.028 22 4.292 22h15.416C20.972 22 22 20.972 22 19.708V4.292C22 3.028 20.972 2 19.708 2zm.792 17.708c0 .437-.355.792-.792.792H4.292c-.437 0-.792-.355-.792-.792V6.418c0-.437.354-.79.79-.792h15.42c.436 0 .79.355.79.79V19.71z" />
@@ -147,7 +173,189 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-        <hr className="border-gray-800" />
+        <hr className="border-blue-600 border-1" />
+        <div></div>
+        {!isLoading ? (
+          <>
+            {myPost.map((post: Post) => (
+              <div key={post._id} className="">
+                <div className=" flex items-center justify-between p-4 pb-0 relative">
+                  <div className="flex items-center">
+                    <div>
+                      <Image
+                        width={100}
+                        height={100}
+                        className="h-10 w-10 rounded-full"
+                        src={post?.user_photo || avatar}
+                        alt=""
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <div className="flex items-center gap-1">
+                        <p className="text-base leading-6 font-medium text-white">
+                          {post?.name}
+                        </p>
+                        <Image
+                          width={100}
+                          height={100}
+                          className="h-3.5 w-3.5 rounded-full"
+                          src={verified}
+                          alt="verified"
+                          title="NH Social confirmed this profile is authentic"
+                        />
+                      </div>
+                      <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
+                        {post?.user_name} - 16 April 2023
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => handleEditClick(post._id)}
+                    className="font-semibold text-xl hover:cursor-pointer hover:text-blue-400"
+                  >
+                    ...
+                  </div>
+                  <EditPost
+                    editModes={editModes[post._id] || false}
+                    setEditModes={(postId) => handleEditClick(postId)}
+                    post={post}
+                    refetch={refetch}
+                  />
+                </div>
+                <div className="pl-16 pr-2">
+                  <p className="text-base width-auto font-medium text-white flex-shrink">
+                    {post?.post_text}
+                  </p>
+                  {post.post_photo && (
+                    <div className="md:flex-shrink pr-6 pt-3">
+                      <Image
+                        height={1000}
+                        width={1000}
+                        className="rounded-lg h-full w-full"
+                        src={post?.post_photo}
+                        alt="Photo is brocken"
+                      />
+                    </div>
+                  )}
+                  <Like post={post} />
+                </div>
+                <hr className="border-gray-600" />
+              </div>
+            ))}
+
+            <nav className="lg:hidden fixed z-[999] flex justify-between items-center gap-5 bg-blue-400 px-6 py-3 backdrop-blur-md w-full rounded-full text-dark_primary duration-300 bottom-0">
+              <Link
+                href="/"
+                className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+              >
+                <FaHome />
+              </Link>
+              <Link
+                href="/"
+                className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+              >
+                <FaRegBell />
+              </Link>
+              <Link
+                href="/"
+                className="text-xl p-2.5 rounded-full sm:cursor-pointer"
+              >
+                <FaFacebookMessenger />
+              </Link>
+
+              <div className="dropdown dropdown-top">
+                <div className="flex items-center">
+                  <label
+                    tabIndex={0}
+                    className="btn btn-ghost btn-circle avatar"
+                  >
+                    <div className="w-8 rounded-full">
+                      <Image
+                        width={100}
+                        height={100}
+                        src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                        alt=""
+                      />
+                    </div>
+                  </label>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content rounded-box w-52 bg-gray-800 text-white"
+                >
+                  <li className="my-2">
+                    <Link href={user ? "/profile" : "/login"}>Profile</Link>
+                  </li>
+                  <li className="mb-2">
+                    {user ? (
+                      <Link onClick={handleSignout} href="login">
+                        Logout
+                      </Link>
+                    ) : (
+                      <Link href="login">Login</Link>
+                    )}
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </>
+        ) : (
+          // Loading Skeleton
+          <>
+            <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+              <div className="flex justify-start items-center">
+                <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+                <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              </div>
+              <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <hr className="border-gray-600" />
+            <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+              <div className="flex justify-start items-center">
+                <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+                <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              </div>
+              <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <hr className="border-gray-600" />
+            <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+              <div className="flex justify-start items-center">
+                <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+                <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              </div>
+              <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <hr className="border-gray-600" />
+            <div className="space-y-5 bg-slate-900 px-4 my-8 animate-pulse">
+              <div className="flex justify-start items-center">
+                <div className="h-10 w-10 rounded-full bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-2/6 ms-3 rounded-lg bg-rose-100/10 animate-pulse"></div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-3 w-3/5 rounded-lg bg-rose-100/10 animate-pulse"></div>
+                <div className="h-3 w-4/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+                <div className="h-3 w-2/5 rounded-lg bg-rose-100/20 animate-pulse"></div>
+              </div>
+              <div className="h-72 rounded-lg bg-rose-100/10 animate-pulse"></div>
+            </div>
+            <hr className="border-gray-600" />
+          </>
+        )}
       </div>
       <nav className="lg:hidden fixed z-[999] flex justify-between items-center gap-5 bg-blue-400 px-6 py-3 backdrop-blur-md w-full rounded-full text-dark_primary duration-300 bottom-0">
         <Link href="/" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
@@ -165,12 +373,37 @@ const ProfilePage = () => {
         >
           <FaFacebookMessenger />
         </Link>
-        <Link
-          href="/profile"
-          className="text-xl p-2.5 rounded-full sm:cursor-pointer"
-        >
-          <FaUserCheck />
-        </Link>
+        <div className="dropdown dropdown-top">
+          <div className="flex items-center">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-8 rounded-full">
+                <Image
+                  width={100}
+                  height={100}
+                  src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                  alt=""
+                />
+              </div>
+            </label>
+          </div>
+          <ul
+            tabIndex={0}
+            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content rounded-box w-52 bg-gray-800 text-white"
+          >
+            <li className="my-2">
+              <Link href="/profile">Profile</Link>
+            </li>
+            <li className="mb-2">
+              {user ? (
+                <Link onClick={handleSignout} href="login">
+                  Logout
+                </Link>
+              ) : (
+                <Link href="login">Login</Link>
+              )}
+            </li>
+          </ul>
+        </div>
       </nav>
     </div>
   );
