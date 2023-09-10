@@ -6,7 +6,7 @@ import { logoutUser } from "../firebase/firebaseAuth";
 
 // create base URL
 const axiosSecure = axios.create({
-  baseURL: "https://nh-social-server.vercel.app",
+  baseURL: "http://localhost:5000",
 });
 
 const useAxiosSecure = () => {

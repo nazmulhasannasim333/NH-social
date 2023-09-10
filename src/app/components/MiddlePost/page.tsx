@@ -5,10 +5,11 @@ import { RootState } from "@/src/redux/store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import axios from "axios";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsCameraVideo, BsEmojiLaughing } from "react-icons/bs";
 import {
@@ -40,12 +41,20 @@ export interface Post {
   post_text: string;
   name: string;
   user_name: string;
+  date: string;
 }
 
 type FormData = {
   tweetText: string;
   photo: string;
 };
+
+interface User {
+  name: string;
+  email: string;
+  photo: string;
+  user_name: string;
+}
 
 const MiddlePost = () => {
   const [posts, isLoading, refetch] = usePosts();
@@ -56,6 +65,14 @@ const MiddlePost = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [inputImage, setInputImage] = useState<File | string>("");
   const router = useRouter();
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+
+  // get logged user
+  useEffect(() => {
+    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
+      setLoggedUser(res.data);
+    });
+  }, [user?.email]);
 
   const handleSignout = () => {
     logoutUser().then(() => {
@@ -118,62 +135,54 @@ const MiddlePost = () => {
               const status = {
                 post_text,
                 post_photo: postURL,
-                name: user?.displayName,
-                user_name: "@NHnasim333",
-                user_email: user?.email,
-                user_photo:
-                  user?.photoURL ||
-                  "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+                name: loggedUser?.name,
+                user_name: loggedUser?.user_name,
+                user_email: loggedUser?.email,
+                user_photo: loggedUser?.photo || "",
               };
 
-              axios
-                .post(`https://nh-social-server.vercel.app/post`, status)
-                .then((res) => {
-                  console.log(res.data);
-                  if (res.data.insertedId) {
-                    refetch();
-                    setInputValue("");
-                    setShowEmoji(false);
-                    setInputImage("");
-                    Swal.fire({
-                      position: "top-end",
-                      icon: "success",
-                      title: "Your post has been successful",
-                      showConfirmButton: false,
-                      timer: 1500,
-                    });
-                  }
-                });
+              axios.post(`http://localhost:5000/post`, status).then((res) => {
+                console.log(res.data);
+                if (res.data.insertedId) {
+                  refetch();
+                  setInputValue("");
+                  setShowEmoji(false);
+                  setInputImage("");
+                  Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Your post has been successful",
+                    showConfirmButton: false,
+                    timer: 1500,
+                  });
+                }
+              });
             }
           });
       } else {
         const { tweetText: post_text } = data;
         const status = {
           post_text,
-          name: user?.displayName,
-          user_name: "@NHnasim333",
-          user_email: user?.email,
-          user_photo:
-            user?.photoURL ||
-            "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          name: loggedUser?.name,
+          user_name: loggedUser?.user_name,
+          user_email: loggedUser?.email,
+          user_photo: loggedUser?.photo || "",
         };
-        axios
-          .post(`https://nh-social-server.vercel.app/post`, status)
-          .then((res) => {
-            console.log(res.data);
-            if (res.data.insertedId) {
-              refetch();
-              setInputValue("");
-              setShowEmoji(false);
-              Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Your post has been success",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          });
+        axios.post(`http://localhost:5000/post`, status).then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            refetch();
+            setInputValue("");
+            setShowEmoji(false);
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Your post has been success",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        });
       }
     }
   };
@@ -209,9 +218,6 @@ const MiddlePost = () => {
             </Link>
           </h2>
         </div>
-        {/* <div className="text-xl font-bold mb-5  lg:hidden block">
-         
-        </div> */}
         <div className="w-2/3 px-4 py-2 m-2">
           <button type="submit" className="absolute ml-4 mt-3 mr-4">
             <FaSearch />
@@ -232,8 +238,8 @@ const MiddlePost = () => {
             <Image
               height={100}
               width={100}
-              className="inline-block rounded-full"
-              src={user && user.photoURL ? user?.photoURL : avatar}
+              className="inline-block rounded-full h-10 w-10"
+              src={loggedUser && loggedUser.photo ? loggedUser?.photo : avatar}
               alt=""
             />
           </div>
@@ -352,17 +358,20 @@ const MiddlePost = () => {
                       <p className="text-base leading-6 font-medium text-white">
                         {post?.name}
                       </p>
-                      <Image
-                        width={100}
-                        height={100}
-                        className="h-3.5 w-3.5 rounded-full"
-                        src={verified}
-                        alt="verified"
-                        title="NH Social confirmed this profile is authentic"
-                      />
+                      {post?.user_photo && (
+                        <Image
+                          width={100}
+                          height={100}
+                          className="h-3.5 w-3.5 rounded-full"
+                          src={verified}
+                          alt="verified"
+                          title="NH Social confirmed this profile is authentic"
+                        />
+                      )}
                     </div>
-                    <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                      {post?.user_name} - 16 April 2023
+                    <span className="text-sm leading-6  font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
+                      {post?.user_name} -{" "}
+                      {moment(post?.date).format("Do MMM  YY, h:mm a")}
                     </span>
                   </div>
                 </div>
@@ -380,7 +389,7 @@ const MiddlePost = () => {
                 />
               </div>
               <div className="pl-16 pr-2">
-                <p className="text-base width-auto font-medium text-white flex-shrink">
+                <p className="text-base width-auto font-medium text-slate-200 flex-shrink">
                   {post?.post_text}
                 </p>
                 {post.post_photo && (

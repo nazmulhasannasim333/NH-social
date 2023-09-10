@@ -1,14 +1,32 @@
 "use client";
 import { logoutUser } from "@/src/firebase/firebaseAuth";
 import { RootState } from "@/src/redux/store";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import avatar from "../../../../public/images/avatar.png";
 import Navbar from "../Navbar";
 
+interface User {
+  name: string;
+  email: string;
+  photo: string;
+  user_name: string;
+}
+
 const LeftSide = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+
+  // get logged user
+  useEffect(() => {
+    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
+      setLoggedUser(res.data);
+    });
+  }, [user?.email]);
+
   // console.log(user.displayName);
   const handleSignout = () => {
     logoutUser().then(() => {
@@ -27,17 +45,22 @@ const LeftSide = () => {
               <Image
                 width={50}
                 height={50}
-                src={user && user.photoURL ? user?.photoURL : avatar}
+                src={
+                  loggedUser && loggedUser.photo ? loggedUser?.photo : avatar
+                }
                 alt=""
               />
             </div>
           </label>
           <div className="ml-3">
             <p className="text-base leading-6 font-medium text-white">
-              {user && user.displayName}
+              {loggedUser && loggedUser?.name ? loggedUser?.name : "Your Name"}
             </p>
             <p className="text-sm leading-5 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-              @NHnasim333
+              @
+              {loggedUser && loggedUser?.user_name
+                ? loggedUser?.user_name
+                : "demo_username"}
             </p>
           </div>
         </div>

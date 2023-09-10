@@ -36,12 +36,16 @@ const Register = () => {
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     console.log(data);
+    const userName = `${data.email.slice(0, 10)}${Math.floor(
+      Math.random() * 1000
+    )}`;
 
     axios
-      .post("https://nh-social-server.vercel.app/user", {
+      .post("http://localhost:5000/user", {
         name: data.name,
         email: data.email,
         photo: "",
+        user_name: userName,
         date: new Date(),
       })
       .then((res) => {

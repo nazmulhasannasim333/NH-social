@@ -3,9 +3,10 @@
 import { logoutUser } from "@/src/firebase/firebaseAuth";
 import useMyPosts from "@/src/hooks/useMyPost";
 import { RootState } from "@/src/redux/store";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaArrowLeft,
   FaFacebookMessenger,
@@ -23,11 +24,26 @@ import { Post } from "../../components/MiddlePost/page";
 //   description: "NH Social App",
 // };
 
+interface User {
+  name: string;
+  email: string;
+  photo: string;
+  user_name: string;
+}
+
 const ProfilePage = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [myPost, isLoading, refetch] = useMyPosts();
   const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
-  console.log(myPost);
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+
+  // get logged user
+  useEffect(() => {
+    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
+      setLoggedUser(res.data);
+    });
+  }, [user?.email]);
+  // console.log(myPost);
 
   const handleSignout = () => {
     logoutUser().then(() => {
@@ -100,7 +116,11 @@ const ProfilePage = () => {
                     height={100}
                     style={{ height: "9rem", width: "9rem" }}
                     className="md rounded-full relative border-4 border-gray-900"
-                    src="https://pbs.twimg.com/profile_images/1254779846615420930/7I4kP65u_400x400.jpg"
+                    src={
+                      loggedUser && loggedUser.photo
+                        ? loggedUser?.photo
+                        : avatar
+                    }
                     alt=""
                   />
                   <div className="absolute" />
@@ -118,11 +138,23 @@ const ProfilePage = () => {
           <div className="space-y-1 justify-center w-full mt-3 ml-3">
             {/* User basic*/}
             <div>
-              <h2 className="text-xl leading-6 font-bold text-white">
-                {user && user?.displayName}
-              </h2>
+              <div className="flex items-center gap-x-1">
+                <h2 className="text-xl leading-6 font-bold text-white">
+                  {loggedUser && loggedUser?.name}
+                </h2>
+                {loggedUser && loggedUser.photo && (
+                  <Image
+                    width={100}
+                    height={100}
+                    className="h-4 w-4 rounded-full"
+                    src={verified}
+                    alt="verified"
+                    title="NH Social confirmed this profile is authentic"
+                  />
+                )}
+              </div>
               <p className="text-sm leading-5 font-medium text-gray-600">
-                @NHnasim333
+                @{loggedUser && loggedUser?.user_name}
               </p>
             </div>
             {/* Description and others */}
@@ -195,14 +227,16 @@ const ProfilePage = () => {
                         <p className="text-base leading-6 font-medium text-white">
                           {post?.name}
                         </p>
-                        <Image
-                          width={100}
-                          height={100}
-                          className="h-3.5 w-3.5 rounded-full"
-                          src={verified}
-                          alt="verified"
-                          title="NH Social confirmed this profile is authentic"
-                        />
+                        {loggedUser && loggedUser.photo && (
+                          <Image
+                            width={100}
+                            height={100}
+                            className="h-3.5 w-3.5 rounded-full"
+                            src={verified}
+                            alt="verified"
+                            title="NH Social confirmed this profile is authentic"
+                          />
+                        )}
                       </div>
                       <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
                         {post?.user_name} - 16 April 2023
