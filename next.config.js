@@ -5,7 +5,7 @@ const nextConfig = {};
 module.exports = {
   images: {
     domains: ["images.pexels.com", "pbs.twimg.com", "i.ibb.co"],
-    // Add the hostnames here
   },
+  productionBrowserSourceMaps: false,
   swcMinify: false,
 };
