@@ -4,6 +4,7 @@ import { logoutUser } from "@/src/firebase/firebaseAuth";
 import useMyPosts from "@/src/hooks/useMyPost";
 import { RootState } from "@/src/redux/store";
 import axios from "axios";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -239,7 +240,8 @@ const ProfilePage = () => {
                         )}
                       </div>
                       <span className="text-sm leading-6 ms-1 font-medium text-gray-400 group-hover:text-gray-300 transition ease-in-out duration-150">
-                        {post?.user_name} - 16 April 2023
+                        {post?.user_name} -{" "}
+                        {moment(post?.date).format("Do MMM  YY, h:mm a")}
                       </span>
                     </div>
                   </div>
