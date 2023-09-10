@@ -10,7 +10,7 @@ const usePosts = () => {
   } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await axios(`http://localhost:5000/posts`);
+      const response = await axios(`https://nh-social-server.vercel.app/posts`);
       return response.data;
     },
   });

@@ -40,9 +40,11 @@ const ProfilePage = () => {
 
   // get logged user
   useEffect(() => {
-    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
-      setLoggedUser(res.data);
-    });
+    axios
+      .get(`https://nh-social-server.vercel.app/user/${user?.email}`)
+      .then((res) => {
+        setLoggedUser(res.data);
+      });
   }, [user?.email]);
   // console.log(myPost);
 
