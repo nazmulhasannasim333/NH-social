@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-// module.exports = nextConfig;
-module.exports = {
+const nextConfig = {
+  swcMinify: false,
   images: {
     domains: ["images.pexels.com", "pbs.twimg.com", "i.ibb.co"],
   },
-  productionBrowserSourceMaps: false,
-  swcMinify: false,
 };
+
+module.exports = nextConfig;
