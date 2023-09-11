@@ -57,7 +57,8 @@ interface User {
 }
 
 const MiddlePost = () => {
-  const [posts, isLoading, refetch] = usePosts();
+  const [searchText, setSearchText] = useState("");
+  const [posts, isLoading, refetch] = usePosts(searchText);
   const [inputValue, setInputValue] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
@@ -66,6 +67,13 @@ const MiddlePost = () => {
   const [inputImage, setInputImage] = useState<File | string>("");
   const router = useRouter();
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  // console.log(searchText);
+
+  // get post by search text
+  const handleSearchText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(e.target.value);
+    setSearchText(e.target.value);
+  };
 
   // get logged user
   useEffect(() => {
@@ -229,6 +237,7 @@ const MiddlePost = () => {
             <FaSearch />
           </button>
           <input
+            onChange={handleSearchText}
             type="search"
             name="search"
             placeholder="Search NH Social"

@@ -16,6 +16,7 @@ import {
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import avatar from "../../../public/images/avatar.png";
+import verified from "../../../public/images/verified.png";
 
 interface LikeProps {
   post: {
@@ -342,8 +343,8 @@ const Like: React.FC<LikeProps> = ({ post }) => {
                     <Image
                       height={100}
                       width={100}
-                      className="inline-block h-10 w-10 rounded-full"
-                      src="https://images.pexels.com/photos/17938786/pexels-photo-17938786/free-photo-of-man-standing-in-a-field-at-dusk.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      className="inline-block h-9 w-9 rounded-full"
+                      src={loggedUser?.photo ? loggedUser?.photo : avatar}
                       alt=""
                     />
                   </div>
@@ -410,9 +411,21 @@ const Like: React.FC<LikeProps> = ({ post }) => {
                       />
                     </div>
                     <div className="ms-3">
-                      <h1 className="text-lg font-semibold">
-                        {user_comment?.name}
-                      </h1>
+                      <div className="flex items-center gap-x-1">
+                        <h1 className="text-lg font-semibold">
+                          {user_comment?.name}
+                        </h1>
+                        {user_comment?.user_photo && (
+                          <Image
+                            width={100}
+                            height={100}
+                            className="h-3.5 w-3.5 rounded-full"
+                            src={verified}
+                            alt="verified"
+                            title="NH Social confirmed this profile is authentic"
+                          />
+                        )}
+                      </div>
                       <p className="text-slate-200">
                         {user_comment?.comment_text}
                       </p>

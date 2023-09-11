@@ -2,15 +2,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const usePosts = () => {
+const usePosts = (searchText: string) => {
+  console.log(searchText);
   const {
     data: posts = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts", searchText],
     queryFn: async () => {
-      const response = await axios(`https://nh-social-server.vercel.app/posts`);
+      const response = await axios(
+        `https://nh-social-server.vercel.app/posts?text=${searchText}`
+      );
       return response.data;
     },
   });

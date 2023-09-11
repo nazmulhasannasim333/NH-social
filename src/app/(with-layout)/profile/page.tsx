@@ -1,5 +1,4 @@
 "use client";
-
 import { logoutUser } from "@/src/firebase/firebaseAuth";
 import useMyPosts from "@/src/hooks/useMyPost";
 import { RootState } from "@/src/redux/store";
@@ -20,6 +19,7 @@ import verified from "../../../../public/images/verified.png";
 import EditPost from "../../components/EditPost";
 import Like from "../../components/Like";
 import { Post } from "../../components/MiddlePost/page";
+import ProfileUpdateModal from "../../components/ProfileUpdateModal";
 // export const metadata: Metadata = {
 //   title: "NH Social || Profile",
 //   description: "NH Social App",
@@ -37,6 +37,7 @@ const ProfilePage = () => {
   const [myPost, isLoading, refetch] = useMyPosts();
   const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   // get logged user
   useEffect(() => {
@@ -132,9 +133,13 @@ const ProfilePage = () => {
             </div>
             {/* Follow Button */}
             <div className="flex flex-col text-right">
-              <button className="flex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  max-w-max border bg-transparent border-blue-500 text-blue-500 hover:border-blue-800  items-center hover:shadow-lg font-bold py-2 px-4 rounded-full mr-0 ml-auto">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  max-w-max border bg-transparent border-blue-500 text-blue-500 hover:border-blue-800  items-center hover:shadow-lg font-bold py-2 px-4 rounded-full mr-0 ml-auto"
+              >
                 Edit Profile
               </button>
+              <ProfileUpdateModal isOpen={isOpen} setIsOpen={setIsOpen} />
             </div>
           </div>
           {/* Profile info */}
