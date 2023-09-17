@@ -165,26 +165,38 @@ const ProfilePage = () => {
             {/* Description and others */}
             <div className="pt-3">
               <p className="text-white leading-tight mb-2 text-xl">
-                {loggedUser && loggedUser?.about}
+                {loggedUser?.about && loggedUser?.about}
               </p>
 
               <div className="text-gray-600">
                 <span className="flex mr-2 mt-2 ">
                   <FaBookReader />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser && loggedUser.university}
+                    {loggedUser.university ? (
+                      loggedUser.university
+                    ) : (
+                      <span className="text-gray-500">Add University</span>
+                    )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaMapMarkerAlt />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser && loggedUser.address}
+                    {loggedUser.address ? (
+                      loggedUser.address
+                    ) : (
+                      <span className="text-gray-500">Add Home Town</span>
+                    )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaUserMd />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser && loggedUser.gender}
+                    {loggedUser.gender ? (
+                      loggedUser.gender
+                    ) : (
+                      <span className="text-gray-500">Add Gender</span>
+                    )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
@@ -196,7 +208,11 @@ const ProfilePage = () => {
                 <span className="flex mr-2 mt-2 ">
                   <FaPhoneAlt />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser && loggedUser.phone}
+                    {loggedUser.phone ? (
+                      loggedUser.phone
+                    ) : (
+                      <span className="text-gray-500">Add Phone Number</span>
+                    )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2">
@@ -207,7 +223,11 @@ const ProfilePage = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {loggedUser && loggedUser?.website}
+                      {loggedUser.website ? (
+                        loggedUser.website
+                      ) : (
+                        <span className="text-gray-500">Add Website</span>
+                      )}
                     </a>
                   </span>
                 </span>

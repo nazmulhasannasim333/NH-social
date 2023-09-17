@@ -125,7 +125,7 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
             // console.log(user);
             axios
               .put(
-                `https://nh-social-server.vercel.app/updateProfile/${user?.email}`,
+                `http://localhost:5000/updateProfile/${user?.email}`,
                 updatedUser
               )
               .then((res) => {
@@ -169,10 +169,7 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
         about,
       };
       axios
-        .put(
-          `https://nh-social-server.vercel.app/updateProfile/${user?.email}`,
-          updatedUser
-        )
+        .put(`http://localhost:5000/updateProfile/${user?.email}`, updatedUser)
         .then((res) => {
           console.log(res.status);
           if ((res.status = 200)) {
