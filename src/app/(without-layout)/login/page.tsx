@@ -67,6 +67,7 @@ const LoginPage = () => {
                   type="email"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="example@gmail.com"
+                  required
                 />
               </div>
               <div className="mt-8">
@@ -85,6 +86,7 @@ const LoginPage = () => {
                   type="password"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your password"
+                  required
                 />
               </div>
               <div className="mt-10">

@@ -99,6 +99,7 @@ const Register = () => {
                   type="text"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your name"
+                  required
                 />
               </div>
               <div className="mt-8">
@@ -110,6 +111,7 @@ const Register = () => {
                   type="email"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="example@gmail.com"
+                  required
                 />
               </div>
               <div className="mt-8">
@@ -121,6 +123,7 @@ const Register = () => {
                   type="password"
                   className="w-full text-lg py-2 border-b bg-transparent border-gray-300 focus:outline-none focus:border-blue-500"
                   placeholder="Enter your password"
+                  required
                 />
               </div>
               <div className="mt-10">

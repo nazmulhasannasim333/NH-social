@@ -1,10 +1,9 @@
 "use client";
 import { logoutUser } from "@/src/firebase/firebaseAuth";
+import useUser from "@/src/hooks/userUser";
 import { RootState } from "@/src/redux/store";
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import avatar from "../../../../public/images/avatar.png";
 import Navbar from "../Navbar";
@@ -18,16 +17,7 @@ interface User {
 
 const LeftSide = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
-
-  // get logged user
-  useEffect(() => {
-    axios
-      .get(`https://nh-social-server.vercel.app/user/${user?.email}`)
-      .then((res) => {
-        setLoggedUser(res.data);
-      });
-  }, [user?.email]);
+  const [loggedUser, isUserLoading, userRefetch] = useUser();
 
   // console.log(user.displayName);
   const handleSignout = () => {

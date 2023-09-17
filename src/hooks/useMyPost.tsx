@@ -11,12 +11,12 @@ const useMyPosts = () => {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["myPosts"],
+    queryKey: ["myPosts", user],
     queryFn: async () => {
       const response = await axios.get(
         `https://nh-social-server.vercel.app/my_post/${user?.email}`
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     },
   });

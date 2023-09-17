@@ -225,7 +225,7 @@ const MiddlePost = () => {
           <h2 className="px-4 py-2 text-2xl font-bold text-white hidden lg:block">
             <Link href="/">Home</Link>
           </h2>
-          <h2 className="ps-2 py-2 text-lg font-bold text-orange-500 lg:hidden block">
+          <h2 className="ps-2 py-2 text-xl font-bold text-orange-500 lg:hidden block">
             <Link href="/">
               {" "}
               NH <span className="text-sky-400">Social</span>
@@ -298,7 +298,6 @@ const MiddlePost = () => {
                 className="ms-5 text-center py-2 m-2 relative"
               >
                 <span className="mt-1 text-blue-400 hover:cursor-pointer">
-                  {/* <FaPhotoVideo type="file" className="text-2xl" /> */}
                   <Image
                     height={100}
                     width={100}
@@ -451,7 +450,7 @@ const MiddlePost = () => {
                     <Image
                       width={100}
                       height={100}
-                      src="https://pbs.twimg.com/profile_images/1121328878142853120/e-rpjoJi_bigger.png"
+                      src={loggedUser?.photo ? loggedUser?.photo : avatar}
                       alt=""
                     />
                   </div>
@@ -534,6 +533,49 @@ const MiddlePost = () => {
           <hr className="border-gray-600" />
         </>
       )}
+      <nav className="lg:hidden fixed z-[999] flex justify-between items-center gap-5 bg-blue-400 px-6 py-3 backdrop-blur-md w-full rounded-full text-dark_primary duration-300 bottom-0">
+        <Link href="/" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
+          <FaHome />
+        </Link>
+        <Link href="/" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
+          <FaRegBell />
+        </Link>
+        <Link href="/" className="text-xl p-2.5 rounded-full sm:cursor-pointer">
+          <FaFacebookMessenger />
+        </Link>
+
+        <div className="dropdown dropdown-top">
+          <div className="flex items-center">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-8 rounded-full">
+                <Image
+                  width={100}
+                  height={100}
+                  src={loggedUser?.photo ? loggedUser?.photo : avatar}
+                  alt=""
+                />
+              </div>
+            </label>
+          </div>
+          <ul
+            tabIndex={0}
+            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content rounded-box w-52 bg-gray-800 text-white"
+          >
+            <li className="my-2">
+              <Link href={user ? "/profile" : "/login"}>Profile</Link>
+            </li>
+            <li className="mb-2">
+              {user ? (
+                <Link onClick={handleSignout} href="login">
+                  Logout
+                </Link>
+              ) : (
+                <Link href="login">Login</Link>
+              )}
+            </li>
+          </ul>
+        </div>
+      </nav>
     </div>
   );
 };
