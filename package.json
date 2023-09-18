@@ -33,6 +33,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
     "react-icons": "^4.10.1",
+    "react-medium-image-zoom": "^5.1.8",
     "react-redux": "^8.1.2",
     "redux": "^4.2.1",
     "sweetalert2": "^11.6.13",

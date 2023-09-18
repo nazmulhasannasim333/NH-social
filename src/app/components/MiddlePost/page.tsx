@@ -18,6 +18,8 @@ import {
   FaRegBell,
   FaSearch,
 } from "react-icons/fa";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import avatar from "../../../../public/images/avatar.png";
@@ -77,9 +79,11 @@ const MiddlePost = () => {
 
   // get logged user
   useEffect(() => {
-    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
-      setLoggedUser(res.data);
-    });
+    axios
+      .get(`https://nh-social-server.vercel.app/user/${user?.email}`)
+      .then((res) => {
+        setLoggedUser(res.data);
+      });
   }, [user?.email]);
 
   const handleSignout = () => {
@@ -149,22 +153,24 @@ const MiddlePost = () => {
                 user_photo: loggedUser?.photo || "",
               };
 
-              axios.post(`http://localhost:5000/post`, status).then((res) => {
-                console.log(res.data);
-                if (res.data.insertedId) {
-                  refetch();
-                  setInputValue("");
-                  setShowEmoji(false);
-                  setInputImage("");
-                  Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Your post has been successful",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-                }
-              });
+              axios
+                .post(`https://nh-social-server.vercel.app/post`, status)
+                .then((res) => {
+                  console.log(res.data);
+                  if (res.data.insertedId) {
+                    refetch();
+                    setInputValue("");
+                    setShowEmoji(false);
+                    setInputImage("");
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Your post has been successful",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                  }
+                });
             }
           });
       } else {
@@ -176,21 +182,23 @@ const MiddlePost = () => {
           user_email: loggedUser?.email,
           user_photo: loggedUser?.photo || "",
         };
-        axios.post(`http://localhost:5000/post`, status).then((res) => {
-          console.log(res.data);
-          if (res.data.insertedId) {
-            refetch();
-            setInputValue("");
-            setShowEmoji(false);
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: "Your post has been success",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          }
-        });
+        axios
+          .post(`https://nh-social-server.vercel.app/post`, status)
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.insertedId) {
+              refetch();
+              setInputValue("");
+              setShowEmoji(false);
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Your post has been success",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          });
       }
     }
   };
@@ -397,18 +405,23 @@ const MiddlePost = () => {
                 />
               </div>
               <div className="pl-16 pr-2">
-                <p className="text-base width-auto font-medium text-slate-200 flex-shrink">
+                <p
+                  className="text-base width-auto font-medium text-slate-200 flex-shrink"
+                  style={{ whiteSpace: "pre-line" }}
+                >
                   {post?.post_text}
                 </p>
                 {post.post_photo && (
                   <div className="md:flex-shrink pr-6 pt-3">
-                    <Image
-                      height={1000}
-                      width={1000}
-                      className="rounded-lg h-full w-full"
-                      src={post?.post_photo}
-                      alt="Photo is brocken"
-                    />
+                    <Zoom>
+                      <Image
+                        height={1000}
+                        width={1000}
+                        className="rounded-lg h-full w-full"
+                        src={post?.post_photo}
+                        alt="Photo is brocken"
+                      />
+                    </Zoom>
                   </div>
                 )}
                 <Like post={post} />

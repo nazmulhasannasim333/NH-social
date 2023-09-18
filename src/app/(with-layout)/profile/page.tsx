@@ -20,6 +20,8 @@ import {
   FaRegBell,
   FaUserMd,
 } from "react-icons/fa";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 import { useSelector } from "react-redux";
 import avatar from "../../../../public/images/avatar.png";
 import verified from "../../../../public/images/verified.png";
@@ -92,14 +94,14 @@ const ProfilePage = () => {
           style={{
             height: "200px",
             backgroundImage:
-              "url(https://pbs.twimg.com/profile_banners/2161323234/1585151401/600x200)",
+              "url(https://images.pexels.com/photos/634688/pexels-photo-634688.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)",
           }}
         >
           <Image
             width={100}
             height={100}
             className="opacity-0 w-full h-full"
-            src="https://pbs.twimg.com/profile_banners/2161323234/1585151401/600x200"
+            src="https://images.pexels.com/photos/12222247/pexels-photo-12222247.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
             alt=""
           />
         </div>
@@ -112,18 +114,21 @@ const ProfilePage = () => {
                   style={{ height: "9rem", width: "9rem" }}
                   className="md rounded-full relative avatar"
                 >
-                  <Image
-                    width={100}
-                    height={100}
-                    style={{ height: "9rem", width: "9rem" }}
-                    className="md rounded-full relative border-4 border-gray-900"
-                    src={
-                      loggedUser && loggedUser.photo
-                        ? loggedUser?.photo
-                        : avatar
-                    }
-                    alt=""
-                  />
+                  <Zoom>
+                    <Image
+                      width={100}
+                      height={100}
+                      style={{ height: "9rem", width: "9rem" }}
+                      className="md rounded-full relative border-4 border-gray-900"
+                      src={
+                        loggedUser && loggedUser.photo
+                          ? loggedUser?.photo
+                          : avatar
+                      }
+                      alt=""
+                    />
+                  </Zoom>
+
                   <div className="absolute" />
                 </div>
               </div>
@@ -307,18 +312,23 @@ const ProfilePage = () => {
                   />
                 </div>
                 <div className="pl-16 pr-2">
-                  <p className="text-base width-auto font-medium text-white flex-shrink">
+                  <p
+                    className="text-base width-auto font-medium text-white flex-shrink"
+                    style={{ whiteSpace: "pre-line" }}
+                  >
                     {post?.post_text}
                   </p>
                   {post.post_photo && (
                     <div className="md:flex-shrink pr-6 pt-3">
-                      <Image
-                        height={1000}
-                        width={1000}
-                        className="rounded-lg h-full w-full"
-                        src={post?.post_photo}
-                        alt="Photo is brocken"
-                      />
+                      <Zoom>
+                        <Image
+                          height={1000}
+                          width={1000}
+                          className="rounded-lg h-full w-full"
+                          src={post?.post_photo}
+                          alt="Photo is brocken"
+                        />
+                      </Zoom>
                     </div>
                   )}
                   <Like post={post} />

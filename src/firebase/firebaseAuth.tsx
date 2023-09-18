@@ -20,7 +20,7 @@ export const initAuthListener = () => {
   onAuthStateChanged(auth, (user) => {
     store.dispatch(setUser(user));
     if (user) {
-      axios.post(`http://localhost:5000/jwt`).then((res) => {
+      axios.post(`https://nh-social-server.vercel.app/jwt`).then((res) => {
         localStorage.setItem("access-token", res.data.token);
         store.dispatch(setLoading(false));
       });

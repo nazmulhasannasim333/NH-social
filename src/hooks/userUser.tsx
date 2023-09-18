@@ -14,7 +14,7 @@ const useUser = () => {
     queryKey: ["loggedUser", user],
     queryFn: async () => {
       const response = await axios.get(
-        `http://localhost:5000/user/${user?.email}`,
+        `https://nh-social-server.vercel.app/user/${user?.email}`,
         {
           headers: {
             "Cache-Control": "no-store",
