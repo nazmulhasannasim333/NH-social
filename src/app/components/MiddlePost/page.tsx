@@ -22,6 +22,7 @@ import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import UserProfileLink from "../../(with-layout)/user-profile/page";
 import avatar from "../../../../public/images/avatar.png";
 import gallery from "../../../../public/images/gallery.png";
 import verified from "../../../../public/images/verified.png";
@@ -371,8 +372,12 @@ const MiddlePost = () => {
                   </div>
                   <div className="ml-3">
                     <div className="flex items-center gap-1">
-                      <p className="text-base leading-6 font-medium text-white">
-                        {post?.name}
+                      <p className="text-base leading-6 font-medium text-white cursor-pointer">
+                        <UserProfileLink
+                          href={`/user-profile/${post?.user_email}`}
+                        >
+                          {post?.name}
+                        </UserProfileLink>
                       </p>
                       {post?.user_photo && (
                         <Image

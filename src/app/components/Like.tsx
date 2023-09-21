@@ -1,3 +1,4 @@
+"use client";
 import { RootState } from "@/src/redux/store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";

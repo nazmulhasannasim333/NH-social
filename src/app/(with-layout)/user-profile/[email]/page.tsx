@@ -1,12 +1,16 @@
 "use client";
 import { logoutUser } from "@/src/firebase/firebaseAuth";
-import useMyPosts from "@/src/hooks/useMyPost";
+import useUserDetails from "@/src/hooks/useUserDetails";
+// import useUserProfilePost from "@/src/hooks/useUserProfilePost";
+import Like from "@/src/app/components/Like";
+import { Post } from "@/src/app/components/MiddlePost/page";
+import useUserProfilePost from "@/src/hooks/useUserProfilePost";
 import useUser from "@/src/hooks/userUser";
 import { RootState } from "@/src/redux/store";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import React from "react";
 import {
   FaArrowLeft,
   FaBookReader,
@@ -23,43 +27,27 @@ import {
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import { useSelector } from "react-redux";
-import avatar from "../../../../public/images/avatar.png";
-import verified from "../../../../public/images/verified.png";
-import EditPost from "../../components/EditPost";
-import Like from "../../components/Like";
-import { Post } from "../../components/MiddlePost/page";
-import ProfileUpdateModal from "../../components/ProfileUpdateModal";
-// export const metadata: Metadata = {
-//   title: "NH Social || Profile",
-//   description: "NH Social App",
-// };
+import avatar from "../../../../../public/images/avatar.png";
+import verified from "../../../../../public/images/verified.png";
 
-interface User {
-  name: string;
-  email: string;
-  photo: string;
-  user_name: string;
+interface UserProfileProps {
+  params: any;
 }
 
-const ProfilePage = () => {
+const UserProfile: React.FC<UserProfileProps> = ({ params }) => {
+  const [userProfile, isUserProfileLoading, userProfileRefetch] =
+    useUserDetails(params.email);
+  //   console.log(userProfile);
+  const [userProfilePost, isUserProfilePostLoading, userProfilePostRefetch] =
+    useUserProfilePost(params.email);
+  console.log(userProfilePost);
   const { user } = useSelector((state: RootState) => state.auth);
-  const [myPost, isLoading, refetch] = useMyPosts();
-  const [editModes, setEditModes] = useState<{ [postId: string]: boolean }>({});
   const [loggedUser, isUserLoading, userRefetch] = useUser();
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleSignout = () => {
     logoutUser().then(() => {
       console.log("Logout Successful");
     });
-  };
-
-  // Function to handle "Edit" button click
-  const handleEditClick = (postId: string) => {
-    setEditModes((prevEditModes) => ({
-      ...prevEditModes,
-      [postId]: !prevEditModes[postId], // Toggle the edit mode for this post
-    }));
   };
 
   return (
@@ -78,10 +66,10 @@ const ProfilePage = () => {
           </div>
           <div className="m-2">
             <h2 className="mb-0 text-xl font-bold text-white">
-              {loggedUser && loggedUser?.name}
+              {userProfile && userProfile?.displayName}
             </h2>
             <p className="mb-0 w-48 text-xs text-gray-400">
-              {myPost.length} Posts
+              {/* {myPost.length} Posts */}
             </p>
           </div>
         </div>
@@ -121,8 +109,8 @@ const ProfilePage = () => {
                       style={{ height: "9rem", width: "9rem" }}
                       className="md rounded-full relative border-4 border-gray-900"
                       src={
-                        loggedUser && loggedUser.photo
-                          ? loggedUser?.photo
+                        userProfile && userProfile.photo
+                          ? userProfile?.photo
                           : avatar
                       }
                       alt=""
@@ -134,15 +122,7 @@ const ProfilePage = () => {
               </div>
             </div>
             {/* Follow Button */}
-            <div className="flex flex-col text-right">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex justify-center  max-h-max whitespace-nowrap focus:outline-none  focus:ring  max-w-max border bg-transparent border-blue-500 text-blue-500 hover:border-blue-800  items-center hover:shadow-lg font-bold py-2 px-4 rounded-full mr-0 ml-auto"
-              >
-                Edit Profile
-              </button>
-              <ProfileUpdateModal isOpen={isOpen} setIsOpen={setIsOpen} />
-            </div>
+            <div className="flex flex-col text-right"></div>
           </div>
           {/* Profile info */}
           <div className="space-y-1 justify-center w-full mt-3 ml-3">
@@ -150,9 +130,9 @@ const ProfilePage = () => {
             <div>
               <div className="flex items-center gap-x-1">
                 <h2 className="text-xl leading-6 font-bold text-white">
-                  {loggedUser && loggedUser?.name}
+                  {userProfile && userProfile?.name}
                 </h2>
-                {loggedUser && loggedUser.photo && (
+                {userProfile && userProfile.photo && (
                   <Image
                     width={100}
                     height={100}
@@ -164,59 +144,59 @@ const ProfilePage = () => {
                 )}
               </div>
               <p className="text-sm leading-5 font-medium text-slate-500">
-                @{loggedUser.user_name && loggedUser?.user_name}
+                @{userProfile.user_name && userProfile?.user_name}
               </p>
             </div>
             {/* Description and others */}
             <div className="pt-3">
               <p className="text-white leading-tight mb-2 text-xl">
-                {loggedUser?.about && loggedUser?.about}
+                {userProfile?.about && userProfile?.about}
               </p>
 
               <div className="text-gray-600">
                 <span className="flex mr-2 mt-2 ">
                   <FaBookReader />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser.university ? (
-                      loggedUser.university
+                    {userProfile.university ? (
+                      userProfile.university
                     ) : (
-                      <span className="text-gray-500">Add University</span>
+                      <span className="text-gray-500">Not Added</span>
                     )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaMapMarkerAlt />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser.address ? (
-                      loggedUser.address
+                    {userProfile.address ? (
+                      userProfile.address
                     ) : (
-                      <span className="text-gray-500">Add Home Town</span>
+                      <span className="text-gray-500">Not Added</span>
                     )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaUserMd />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser.gender ? (
-                      loggedUser.gender
+                    {userProfile.gender ? (
+                      userProfile.gender
                     ) : (
-                      <span className="text-gray-500">Add Gender</span>
+                      <span className="text-gray-500">Not Added</span>
                     )}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaMailBulk />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser && loggedUser.email}
+                    {userProfile && userProfile.email}
                   </span>
                 </span>
                 <span className="flex mr-2 mt-2 ">
                   <FaPhoneAlt />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {loggedUser.phone ? (
-                      loggedUser.phone
+                    {userProfile.phone ? (
+                      userProfile.phone
                     ) : (
-                      <span className="text-gray-500">Add Phone Number</span>
+                      <span className="text-gray-500">Not Added</span>
                     )}
                   </span>
                 </span>
@@ -224,14 +204,14 @@ const ProfilePage = () => {
                   <FaLink />
                   <span className="leading-5 ml-2 text-blue-400">
                     <a
-                      href={loggedUser.website ? loggedUser.website : ""}
+                      href={userProfile.website ? userProfile.website : ""}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {loggedUser.website ? (
-                        loggedUser.website
+                      {userProfile.website ? (
+                        userProfile.website
                       ) : (
-                        <span className="text-gray-500">Add Website</span>
+                        <span className="text-gray-500">Not Added</span>
                       )}
                     </a>
                   </span>
@@ -239,7 +219,7 @@ const ProfilePage = () => {
                 <span className="flex mr-2 mt-2 ">
                   <FaCalendarAlt />
                   <span className="leading-5 ml-2 text-slate-300">
-                    {moment(loggedUser && loggedUser.date).format(
+                    {moment(userProfile && userProfile.date).format(
                       "MMMM Do, YYYY"
                     )}
                   </span>
@@ -261,9 +241,9 @@ const ProfilePage = () => {
         </div>
         <hr className="border-blue-600 border-1" />
         <div></div>
-        {!isLoading ? (
+        {!isUserProfilePostLoading ? (
           <>
-            {myPost.map((post: Post) => (
+            {userProfilePost.map((post: Post) => (
               <div key={post._id} className="">
                 <div className=" flex items-center justify-between p-4 pb-0 relative">
                   <div className="flex items-center">
@@ -281,7 +261,7 @@ const ProfilePage = () => {
                         <p className="text-base leading-6 font-medium text-white">
                           {post?.name}
                         </p>
-                        {loggedUser && loggedUser.photo && (
+                        {userProfile && userProfile.photo && (
                           <Image
                             width={100}
                             height={100}
@@ -298,18 +278,9 @@ const ProfilePage = () => {
                       </span>
                     </div>
                   </div>
-                  <div
-                    onClick={() => handleEditClick(post._id)}
-                    className="font-semibold text-xl hover:cursor-pointer hover:text-blue-400"
-                  >
+                  <div className="font-semibold text-xl hover:cursor-pointer hover:text-blue-400">
                     ...
                   </div>
-                  <EditPost
-                    editModes={editModes[post._id] || false}
-                    setEditModes={(postId) => handleEditClick(postId)}
-                    post={post}
-                    refetch={refetch}
-                  />
                 </div>
                 <div className="pl-16 pr-2">
                   <p
@@ -367,7 +338,7 @@ const ProfilePage = () => {
                       <Image
                         width={100}
                         height={100}
-                        src={loggedUser?.photo ? loggedUser?.photo : avatar}
+                        src={userProfile?.photo ? userProfile?.photo : avatar}
                         alt=""
                       />
                     </div>
@@ -497,4 +468,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default UserProfile;
