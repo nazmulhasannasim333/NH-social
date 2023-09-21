@@ -1,9 +1,8 @@
 "use client";
-import { logoutUser } from "@/src/firebase/firebaseAuth";
-import useUserDetails from "@/src/hooks/useUserDetails";
-// import useUserProfilePost from "@/src/hooks/useUserProfilePost";
 import Like from "@/src/app/components/Like";
 import { Post } from "@/src/app/components/MiddlePost/page";
+import { logoutUser } from "@/src/firebase/firebaseAuth";
+import useUserDetails from "@/src/hooks/useUserDetails";
 import useUserProfilePost from "@/src/hooks/useUserProfilePost";
 import useUser from "@/src/hooks/userUser";
 import { RootState } from "@/src/redux/store";
@@ -30,11 +29,11 @@ import { useSelector } from "react-redux";
 import avatar from "../../../../../public/images/avatar.png";
 import verified from "../../../../../public/images/verified.png";
 
-interface UserProfileProps {
+interface UserProfilePageProps {
   params: any;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ params }) => {
+const UserProfile: React.FC<UserProfilePageProps> = ({ params }) => {
   const [userProfile, isUserProfileLoading, userProfileRefetch] =
     useUserDetails(params.email);
   //   console.log(userProfile);

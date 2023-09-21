@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { logoutUser } from "../firebase/firebaseAuth";
 
-// base URL
 const axiosSecure = axios.create({
   baseURL: "https://nh-social-server.vercel.app",
 });
