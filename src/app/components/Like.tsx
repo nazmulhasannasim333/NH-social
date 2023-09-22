@@ -427,7 +427,10 @@ const Like: React.FC<LikeProps> = ({ post }) => {
                           />
                         )}
                       </div>
-                      <p className="text-slate-200">
+                      <p
+                        className="text-slate-200"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
                         {user_comment?.comment_text}
                       </p>
                     </div>
