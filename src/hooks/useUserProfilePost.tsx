@@ -8,7 +8,7 @@ const useUserProfilePost = (email: string) => {
     isLoading: isUserProfilePostLoading,
     refetch: userProfilePostRefetch,
   } = useQuery({
-    queryKey: ["myPosts"],
+    queryKey: ["userPost"],
     queryFn: async () => {
       const response = await axios.get(
         `https://nh-social-server.vercel.app/user-profile-post/${email}`

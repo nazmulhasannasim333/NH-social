@@ -65,10 +65,10 @@ const UserProfile: React.FC<UserProfilePageProps> = ({ params }) => {
           </div>
           <div className="m-2">
             <h2 className="mb-0 text-xl font-bold text-white">
-              {userProfile && userProfile?.displayName}
+              {userProfile && userProfile?.name}
             </h2>
             <p className="mb-0 w-48 text-xs text-gray-400">
-              {/* {myPost.length} Posts */}
+              {userProfilePost.length} Posts
             </p>
           </div>
         </div>

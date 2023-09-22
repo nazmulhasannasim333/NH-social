@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { ReactNode } from "react";
+import React from "react";
 
-interface UserProfileProps {
-  children: ReactNode;
+interface UserProfileLinkProps {
   href: string;
+  children: React.ReactNode;
 }
 
-const UserProfileLink = ({ href, children }: UserProfileProps) => {
-  console.log(href);
+const UserProfileLink: React.FC<UserProfileLinkProps> = ({
+  href,
+  children,
+}) => {
+  console.log(href, children);
   return <Link href={href}>{children}</Link>;
 };
 

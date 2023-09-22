@@ -59,7 +59,7 @@ interface User {
   user_name: string;
 }
 
-const MiddlePost = () => {
+const MiddlePost: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, isLoading, refetch] = usePosts(searchText);
   const [inputValue, setInputValue] = useState("");
