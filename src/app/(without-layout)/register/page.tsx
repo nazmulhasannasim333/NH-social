@@ -41,7 +41,7 @@ const Register = () => {
     )}`;
 
     axios
-      .post("https://nh-social-server.vercel.app/user", {
+      .post("http://localhost:5000/user", {
         name: data.name,
         email: data.email,
         photo: "",

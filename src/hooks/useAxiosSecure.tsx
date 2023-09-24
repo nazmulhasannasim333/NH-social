@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { logoutUser } from "../firebase/firebaseAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "https://nh-social-server.vercel.app",
+  baseURL: "http://localhost:5000",
 });
 
 const useAxiosSecure = () => {

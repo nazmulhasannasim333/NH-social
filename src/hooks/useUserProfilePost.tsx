@@ -11,7 +11,7 @@ const useUserProfilePost = (email: string) => {
     queryKey: ["userPost"],
     queryFn: async () => {
       const response = await axios.get(
-        `https://nh-social-server.vercel.app/user-profile-post/${email}`
+        `http://localhost:5000/user-profile-post/${email}`
       );
       // console.log(response.data);
       return response.data;

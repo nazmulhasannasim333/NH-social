@@ -11,7 +11,7 @@ const useUserDetails = (email: string) => {
     queryKey: ["userProfile"],
     queryFn: async () => {
       const response = await axios.get(
-        `https://nh-social-server.vercel.app/user-profile/${email}`,
+        `http://localhost:5000/user-profile/${email}`,
         {
           headers: {
             "Cache-Control": "no-store",

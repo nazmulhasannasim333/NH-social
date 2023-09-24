@@ -39,7 +39,7 @@ const EditPost: React.FC<EditPostProps> = ({
       if (result.isConfirmed) {
         axios
           .delete(
-            `https://nh-social-server.vercel.app/remove_post/${selectedPost._id}/${user?.email}`
+            `http://localhost:5000/remove_post/${selectedPost._id}/${user?.email}`
           )
           .then((res) => {
             if (res.data.deletedCount > 0) {
@@ -57,7 +57,7 @@ const EditPost: React.FC<EditPostProps> = ({
       {editModes && (
         <>
           {post?.user_email === user?.email && (
-            <div className="bg-slate-800 p-3 absolute right-10 top-12">
+            <div className="bg-slate-800 p-3 absolute right-10 top-12 z-50">
               <ul>
                 <li
                   onClick={() => setIsOpen(!isOpen)}
