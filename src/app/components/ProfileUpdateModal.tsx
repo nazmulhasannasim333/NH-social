@@ -125,7 +125,7 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
             // console.log(user);
             axios
               .put(
-                `http://localhost:5000/updateProfile/${user?.email}`,
+                `https://nh-social-server.vercel.app/updateProfile/${user?.email}`,
                 updatedUser
               )
               .then((res) => {
@@ -144,17 +144,20 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
                 }
               });
             axios
-              .put(`http://localhost:5000/update_post_author/${user?.email}`, {
-                name,
-                user_name,
-                user_photo: userPhotoURL,
-              })
+              .put(
+                `https://nh-social-server.vercel.app/update_post_author/${user?.email}`,
+                {
+                  name,
+                  user_name,
+                  user_photo: userPhotoURL,
+                }
+              )
               .then((res) => {
                 console.log(res);
               });
             axios
               .put(
-                `http://localhost:5000/update_comment_author/${user?.email}`,
+                `https://nh-social-server.vercel.app/update_comment_author/${user?.email}`,
                 {
                   name,
                   user_photo: userPhotoURL,
@@ -189,7 +192,10 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
         about,
       };
       axios
-        .put(`http://localhost:5000/updateProfile/${user?.email}`, updatedUser)
+        .put(
+          `https://nh-social-server.vercel.app/updateProfile/${user?.email}`,
+          updatedUser
+        )
         .then((res) => {
           console.log(res.status);
           if ((res.status = 200)) {
@@ -206,17 +212,23 @@ const ProfileUpdateModal: React.FC<ProfileModalProps> = ({
           }
         });
       axios
-        .put(`http://localhost:5000/update_post_author/${user?.email}`, {
-          name,
-          user_name,
-        })
+        .put(
+          `https://nh-social-server.vercel.app/update_post_author/${user?.email}`,
+          {
+            name,
+            user_name,
+          }
+        )
         .then((res) => {
           // console.log(res);
         });
       axios
-        .put(`http://localhost:5000/update_comment_author/${user?.email}`, {
-          name,
-        })
+        .put(
+          `https://nh-social-server.vercel.app/update_comment_author/${user?.email}`,
+          {
+            name,
+          }
+        )
         .then((res) => {
           console.log(res);
         });

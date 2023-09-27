@@ -79,9 +79,11 @@ const MiddlePost: React.FC = () => {
 
   // get logged user
   useEffect(() => {
-    axios.get(`http://localhost:5000/user/${user?.email}`).then((res) => {
-      setLoggedUser(res.data);
-    });
+    axios
+      .get(`https://nh-social-server.vercel.app/user/${user?.email}`)
+      .then((res) => {
+        setLoggedUser(res.data);
+      });
   }, [user?.email]);
 
   const handleSignout = () => {
@@ -151,22 +153,24 @@ const MiddlePost: React.FC = () => {
                 user_photo: loggedUser?.photo || "",
               };
 
-              axios.post(`http://localhost:5000/post`, status).then((res) => {
-                console.log(res.data);
-                if (res.data.insertedId) {
-                  refetch();
-                  setInputValue("");
-                  setShowEmoji(false);
-                  setInputImage("");
-                  Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Your post has been successful",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  });
-                }
-              });
+              axios
+                .post(`https://nh-social-server.vercel.app/post`, status)
+                .then((res) => {
+                  console.log(res.data);
+                  if (res.data.insertedId) {
+                    refetch();
+                    setInputValue("");
+                    setShowEmoji(false);
+                    setInputImage("");
+                    Swal.fire({
+                      position: "top-end",
+                      icon: "success",
+                      title: "Your post has been successful",
+                      showConfirmButton: false,
+                      timer: 1500,
+                    });
+                  }
+                });
             }
           });
       } else {
@@ -178,21 +182,23 @@ const MiddlePost: React.FC = () => {
           user_email: loggedUser?.email,
           user_photo: loggedUser?.photo || "",
         };
-        axios.post(`http://localhost:5000/post`, status).then((res) => {
-          console.log(res.data);
-          if (res.data.insertedId) {
-            refetch();
-            setInputValue("");
-            setShowEmoji(false);
-            Swal.fire({
-              position: "top-end",
-              icon: "success",
-              title: "Your post has been success",
-              showConfirmButton: false,
-              timer: 1500,
-            });
-          }
-        });
+        axios
+          .post(`https://nh-social-server.vercel.app/post`, status)
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.insertedId) {
+              refetch();
+              setInputValue("");
+              setShowEmoji(false);
+              Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Your post has been success",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
+          });
       }
     }
   };

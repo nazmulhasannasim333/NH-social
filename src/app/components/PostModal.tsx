@@ -43,7 +43,10 @@ const PostModal: React.FC<PostModalProps> = ({
       post_text,
     };
     axios
-      .put(`http://localhost:5000/update_post/${post._id}`, status)
+      .put(
+        `https://nh-social-server.vercel.app/update_post/${post._id}`,
+        status
+      )
       .then((res) => {
         console.log(res.data);
         if (res.data.modifiedCount > 0) {

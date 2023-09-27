@@ -12,7 +12,7 @@ const usePosts = (searchText: string) => {
     queryKey: ["posts", searchText],
     queryFn: async () => {
       const response = await axios(
-        `http://localhost:5000/posts?text=${searchText}`
+        `https://nh-social-server.vercel.app/posts?text=${searchText}`
       );
       return response.data;
     },
