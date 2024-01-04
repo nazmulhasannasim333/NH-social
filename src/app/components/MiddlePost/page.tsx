@@ -361,13 +361,15 @@ const MiddlePost: React.FC = () => {
               <div className=" flex items-center justify-between p-4 pb-0 relative">
                 <div className="flex items-center">
                   <div>
-                    <Image
-                      width={100}
-                      height={100}
-                      className="h-10 w-10 rounded-full"
-                      src={post?.user_photo || avatar}
-                      alt=""
-                    />
+                    <Link href={`/user-profile/${post?.user_email}`}>
+                      <Image
+                        width={100}
+                        height={100}
+                        className="h-10 w-10 rounded-full"
+                        src={post?.user_photo || avatar}
+                        alt=""
+                      />
+                    </Link>
                   </div>
                   <div className="ml-3">
                     <div className="flex items-center gap-1">
